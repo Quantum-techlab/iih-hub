@@ -4,6 +4,49 @@
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
 
+.animated-bg {
+  background: linear-gradient(270deg, #e0e7ff, #c7d2fe, #a5b4fc);
+  background-size: 600% 600%;
+  animation: gradientBG 16s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animated-bg-nice {
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(120deg, #f8fafc, #d1f7ff, #fff7d6, #f5d1ff, #d1ffd6);
+  background-size: 400% 400%;
+  animation: gradientMove 25s ease-in-out infinite;
+}
+@keyframes gradientMove {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+.auth-bg-animated {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.auth-bg-animated svg {
+  position: absolute;
+  filter: blur(60px);
+  opacity: 0.55;
+  animation: moveBg 24s ease-in-out infinite alternate;
+}
+.auth-bg-animated .blob1 { left: 0; top: 0; width: 55vw; }
+.auth-bg-animated .blob2 { right: 0; top: 30%; width: 60vw; animation-delay: 5s; }
+.auth-bg-animated .blob3 { left: 20vw; bottom: 0; width: 65vw; animation-delay: 12s; }
+@keyframes moveBg {
+  0%   { transform: scale(1) translateY(0px) translateX(0px);}
+  50%  { transform: scale(1.12) translateY(-40px) translateX(30px);}
+  100% { transform: scale(0.95) translateY(20px) translateX(-20px);}
+}
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -1,34 +1,48 @@
-
 import { Calendar, Clock, Users, Shield, ChevronRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
+
+const features = [
+  {
+    icon: Clock,
+    title: "Daily Sign-In/Out",
+    description: "Quick and easy attendance tracking with timestamp recording"
+  },
+  {
+    icon: Calendar,
+    title: "Missed Days Tracking",
+    description: "Automatic tracking of missed workdays with clear visibility"
+  },
+  {
+    icon: Users,
+    title: "Admin Dashboard",
+    description: "Comprehensive oversight and reporting for Hub administrators"
+  },
+  {
+    icon: Shield,
+    title: "Secure & Reliable",
+    description: "Bank-level security with 99.9% uptime guarantee"
+  }
+];
+
+const sectionVariant = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.4, 0, 0.2, 1] } }
+};
+
+const staggerContainer = {
+  visible: { transition: { staggerChildren: 0.18 } }
+};
+
+const cardVariant = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.4, 0, 0.2, 1] } }
+};
 
 const LandingPage = ({ onOpenAuth }) => {
-  const features = [
-    {
-      icon: Clock,
-      title: "Daily Sign-In/Out",
-      description: "Quick and easy attendance tracking with timestamp recording"
-    },
-    {
-      icon: Calendar,
-      title: "Missed Days Tracking",
-      description: "Automatic tracking of missed workdays with clear visibility"
-    },
-    {
-      icon: Users,
-      title: "Admin Dashboard",
-      description: "Comprehensive oversight and reporting for Hub administrators"
-    },
-    {
-      icon: Shield,
-      title: "Secure & Reliable",
-      description: "Bank-level security with 99.9% uptime guarantee"
-    }
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="animated-bg-nice min-h-screen w-full">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,10 +76,15 @@ const LandingPage = ({ onOpenAuth }) => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8">
+      <motion.section
+        initial="hidden"
+        animate="visible"
+        variants={sectionVariant}
+        className="relative py-20 px-4 sm:px-6 lg:px-8"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
-            <div className="animate-fade-in">
+            <motion.div variants={sectionVariant}>
               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
                 Track Your Attendance at
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
@@ -77,30 +96,40 @@ const LandingPage = ({ onOpenAuth }) => {
                 Sign in daily, track your progress, and never miss a workday.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Button
-                  size="lg"
-                  onClick={() => onOpenAuth("register")}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-                >
-                  Start Tracking Today
-                  <ChevronRight className="w-5 h-5 ml-2" />
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => onOpenAuth("login")}
-                  className="px-8 py-4 text-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition-all duration-300"
-                >
-                  Sign In
-                </Button>
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    size="lg"
+                    onClick={() => onOpenAuth("register")}
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                  >
+                    Start Tracking Today
+                    <ChevronRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() => onOpenAuth("login")}
+                    className="px-8 py-4 text-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition-all duration-300"
+                  >
+                    Sign In
+                  </Button>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={sectionVariant}
+        className="py-20 px-4 sm:px-6 lg:px-8"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -110,35 +139,51 @@ const LandingPage = ({ onOpenAuth }) => {
               Streamlined features designed specifically for the Ilorin Innovation Hub internship program
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
+          >
             {features.map((feature, index) => (
-              <Card 
-                key={index} 
-                className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 shadow-lg bg-white/70 backdrop-blur-sm"
+              <motion.div
+                key={index}
+                variants={cardVariant}
+                whileHover={{ scale: 1.05, boxShadow: "0 10px 40px rgba(0,0,0,0.10)" }}
+                className="transition-transform duration-300"
               >
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <feature.icon className="w-8 h-8 text-blue-600" />
-                  </div>
-                  <h3 className="font-semibold text-lg text-gray-900 mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
+                <Card 
+                  className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 shadow-lg bg-white/70 backdrop-blur-sm"
+                >
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                      <feature.icon className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <h3 className="font-semibold text-lg text-gray-900 mb-2">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* About Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50">
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={sectionVariant}
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+            <motion.div variants={sectionVariant}>
               <h2 className="text-4xl font-bold text-gray-900 mb-6">
                 Built for Ilorin Innovation Hub
               </h2>
@@ -160,8 +205,11 @@ const LandingPage = ({ onOpenAuth }) => {
                   </div>
                 ))}
               </div>
-            </div>
-            <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl p-8 text-center">
+            </motion.div>
+            <motion.div
+              variants={sectionVariant}
+              className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl p-8 text-center"
+            >
               <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Users className="w-12 h-12 text-white" />
               </div>
@@ -177,10 +225,10 @@ const LandingPage = ({ onOpenAuth }) => {
               >
                 Get Started Now
               </Button>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
