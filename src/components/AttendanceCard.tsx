@@ -1,15 +1,99 @@
-
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Clock, MapPin, Calendar, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const AttendanceCard = ({ user, currentTime, isWeekday, onSignIn, onSignOut }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
   const formatTime = (date) => {
-    return new Date(date).toLocaleTimeString('en-US', {
+    return date.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
       timeZone: 'Africa/Lagos'
     });
+  };
+
+  const handleSignIn = async () => {
+    setIsLoading(true);
+    
+    // Get geolocation
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          
+          toast({
+            title: "Sign-in Submitted",
+            description: `Location captured. Pending admin approval.`,
+          });
+          
+          onSignIn({
+            timestamp: currentTime,
+            location: { latitude, longitude }
+          });
+          
+          setIsLoading(false);
+        },
+        (error) => {
+          toast({
+            title: "Location Error",
+            description: "Unable to get location. Sign-in cancelled.",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+        }
+      );
+    } else {
+      toast({
+        title: "Location Not Supported",
+        description: "Your browser doesn't support geolocation.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    setIsLoading(true);
+    
+    // Get geolocation for sign-out too
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          
+          toast({
+            title: "Sign-out Submitted",
+            description: `Location captured. Pending admin approval.`,
+          });
+          
+          onSignOut({
+            timestamp: currentTime,
+            location: { latitude, longitude }
+          });
+          
+          setIsLoading(false);
+        },
+        (error) => {
+          toast({
+            title: "Location Error",
+            description: "Unable to get location. Sign-out cancelled.",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+        }
+      );
+    } else {
+      toast({
+        title: "Location Not Supported",
+        description: "Your browser doesn't support geolocation.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    }
   };
 
   const getStatusInfo = () => {
@@ -20,6 +104,16 @@ const AttendanceCard = ({ user, currentTime, isWeekday, onSignIn, onSignOut }) =
         status: "Weekend",
         message: "Attendance tracking is only available Monday to Friday",
         bgColor: "bg-gray-50"
+      };
+    }
+
+    if (user.pendingSignIn) {
+      return {
+        icon: Clock,
+        iconColor: "text-orange-500",
+        status: "Pending Approval",
+        message: `Sign-in submitted at ${formatTime(user.pendingSignIn.timestamp)} WAT`,
+        bgColor: "bg-orange-50"
       };
     }
 
@@ -58,8 +152,8 @@ const AttendanceCard = ({ user, currentTime, isWeekday, onSignIn, onSignOut }) =
   const statusInfo = getStatusInfo();
   const StatusIcon = statusInfo.icon;
 
-  const canSignIn = isWeekday && !user.signedInToday;
-  const canSignOut = isWeekday && user.signedInToday && 
+  const canSignIn = isWeekday && !user.signedInToday && !user.pendingSignIn;
+  const canSignOut = isWeekday && (user.signedInToday || user.pendingSignIn) && 
     (!user.lastSignOut || new Date(user.lastSignOut).toDateString() !== currentTime.toDateString());
 
   return (
@@ -86,33 +180,36 @@ const AttendanceCard = ({ user, currentTime, isWeekday, onSignIn, onSignOut }) =
         {isWeekday && (
           <div className="space-y-2">
             <Button
-              onClick={onSignIn}
-              disabled={!canSignIn}
+              onClick={handleSignIn}
+              disabled={!canSignIn || isLoading}
               className={`w-full ${
-                canSignIn
+                canSignIn && !isLoading
                   ? "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                   : "bg-gray-300"
               } text-white`}
             >
-              {user.signedInToday ? "Already Signed In" : "Sign In"}
+              {isLoading ? "Getting Location..." : 
+               user.pendingSignIn ? "Sign-in Pending" :
+               user.signedInToday ? "Already Signed In" : "Sign In"}
             </Button>
             
             <Button
-              onClick={onSignOut}
-              disabled={!canSignOut}
+              onClick={handleSignOut}
+              disabled={!canSignOut || isLoading}
               variant="outline"
               className={`w-full ${
-                canSignOut
+                canSignOut && !isLoading
                   ? "border-orange-300 text-orange-600 hover:bg-orange-50"
                   : "border-gray-300 text-gray-400"
               }`}
             >
-              {!user.signedInToday 
-                ? "Sign In First" 
-                : user.lastSignOut && new Date(user.lastSignOut).toDateString() === currentTime.toDateString()
-                  ? "Already Signed Out"
-                  : "Sign Out"
-              }
+              {isLoading ? "Getting Location..." :
+               !user.signedInToday && !user.pendingSignIn
+                 ? "Sign In First" 
+                 : user.lastSignOut && new Date(user.lastSignOut).toDateString() === currentTime.toDateString()
+                   ? "Already Signed Out"
+                   : "Sign Out"
+               }
             </Button>
           </div>
         )}

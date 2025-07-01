@@ -28,16 +28,16 @@ const features = [
 
 const sectionVariant = {
   hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.4, 0, 0.2, 1] } }
+  visible: { opacity: 1, y: 0 }
 };
 
 const staggerContainer = {
-  visible: { transition: { staggerChildren: 0.18 } }
+  visible: {}
 };
 
 const cardVariant = {
   hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.4, 0, 0.2, 1] } }
+  visible: { opacity: 1, y: 0 }
 };
 
 const LandingPage = ({ onOpenAuth }) => {

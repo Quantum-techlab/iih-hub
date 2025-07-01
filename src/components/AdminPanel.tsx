@@ -63,6 +63,8 @@ const AdminPanel = () => {
       internId: "IIH005",
       email: "samuel@example.com",
       signInTime: "2025-06-30T08:55:00Z",
+      signOutTime: null,
+      location: { latitude: 8.4799, longitude: 4.5418 },
       status: "pending"
     },
     {
@@ -71,29 +73,35 @@ const AdminPanel = () => {
       internId: "IIH006",
       email: "mary@example.com",
       signInTime: "2025-06-30T09:10:00Z",
+      signOutTime: "2025-06-30T17:15:00Z",
+      location: { latitude: 8.4801, longitude: 4.5420 },
+      signOutLocation: { latitude: 8.4800, longitude: 4.5419 },
       status: "pending"
     },
   ]);
 
   // NEW: Approve/Reject handlers
   const handleApprove = (id) => {
-    setPendingSignIns((prev) => prev.filter((signIn) => signIn.id !== id));
-    toast({
-      title: "Sign-in Approved",
-      description: "The intern's sign-in has been approved.",
-      variant: "success",
-    });
-    // TODO: Add API call here
+    const signIn = pendingSignIns.find(s => s.id === id);
+    if (signIn) {
+      // Move to approved attendance records
+      // In real app, this would update database
+      setPendingSignIns((prev) => prev.filter((signIn) => signIn.id !== id));
+      toast({
+        title: "Sign-in Approved",
+        description: `${signIn.name}'s attendance has been approved.`,
+      });
+    }
   };
 
   const handleReject = (id) => {
+    const signIn = pendingSignIns.find(s => s.id === id);
     setPendingSignIns((prev) => prev.filter((signIn) => signIn.id !== id));
     toast({
       title: "Sign-in Rejected",
-      description: "The intern's sign-in has been rejected.",
+      description: `${signIn?.name}'s attendance has been rejected.`,
       variant: "destructive",
     });
-    // TODO: Add API call here
   };
 
   const getStatusBadge = (status) => {
@@ -172,7 +180,18 @@ const AdminPanel = () => {
                   <div>
                     <div className="font-medium text-gray-900">{signIn.name} <span className="text-sm text-gray-600">({signIn.internId})</span></div>
                     <div className="text-sm text-gray-500">{signIn.email}</div>
-                    <div className="text-xs text-gray-400">Signed in at {new Date(signIn.signInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                    <div className="text-xs text-gray-400">
+                      Signed in: {new Date(signIn.signInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {signIn.signOutTime && (
+                        <> | Signed out: {new Date(signIn.signOutTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</>
+                      )}
+                    </div>
+                    <div className="text-xs text-blue-600">
+                      📍 Location: {signIn.location?.latitude?.toFixed(4)}, {signIn.location?.longitude?.toFixed(4)}
+                      {signIn.signOutLocation && (
+                        <> | Out: {signIn.signOutLocation?.latitude?.toFixed(4)}, {signIn.signOutLocation?.longitude?.toFixed(4)}</>
+                      )}
+                    </div>
                   </div>
                   <div className="flex gap-2 mt-2 sm:mt-0">
                     <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white"

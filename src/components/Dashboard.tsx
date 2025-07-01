@@ -162,7 +162,7 @@ const Dashboard = ({ user, onLogout }) => {
     return day >= 1 && day <= 5; // Monday to Friday
   };
 
-  const handleSignIn = () => {
+  const handleSignIn = (data) => {
     if (!isWeekday()) {
       toast({
         title: "Weekend Detected",
@@ -181,18 +181,21 @@ const Dashboard = ({ user, onLogout }) => {
       return;
     }
 
-    // Update user state (in a real app, this would be an API call)
-    user.signedInToday = true;
-    user.lastSignIn = currentTime.toISOString();
+    // Store pending sign-in with geolocation
+    user.pendingSignIn = {
+      timestamp: data.timestamp.toISOString(),
+      location: data.location,
+      status: 'pending'
+    };
     
     toast({
-      title: "Signed In Successfully!",
-      description: `Signed in at ${formatTime(currentTime)} WAT`,
+      title: "Sign-in Submitted!",
+      description: `Pending admin approval at ${formatTime(data.timestamp)} WAT`,
     });
   };
 
-  const handleSignOut = () => {
-    if (!user.signedInToday) {
+  const handleSignOut = (data) => {
+    if (!user.pendingSignIn && !user.signedInToday) {
       toast({
         title: "Not Signed In",
         description: "You must sign in before you can sign out",
@@ -210,12 +213,15 @@ const Dashboard = ({ user, onLogout }) => {
       return;
     }
 
-    // Update user state
-    user.lastSignOut = currentTime.toISOString();
+    // Update pending sign-in with sign-out data
+    if (user.pendingSignIn) {
+      user.pendingSignIn.signOutTimestamp = data.timestamp.toISOString();
+      user.pendingSignIn.signOutLocation = data.location;
+    }
     
     toast({
-      title: "Signed Out Successfully!",
-      description: `Signed out at ${formatTime(currentTime)} WAT`,
+      title: "Sign-out Submitted!",
+      description: `Pending admin approval at ${formatTime(data.timestamp)} WAT`,
     });
   };
 
@@ -367,7 +373,9 @@ const Dashboard = ({ user, onLogout }) => {
             </div>
 
             {/* --- Attendance Calendar & Geolocation --- */}
-            <AttendanceCalendarWithLocation attendance={user.attendance || {}} />
+            {user.role !== "admin" && (
+              <AttendanceCalendarWithLocation attendance={user.attendance || {}} />
+            )}
 
             {/* Quick Stats */}
             <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">

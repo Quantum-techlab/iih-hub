@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Calendar, Eye, EyeOff, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const ADMIN_CODE = "IIH-ADMIN_2025";
+const ADMIN_CODE = "IIH-ADMIN-2025";
 
 const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -89,7 +89,13 @@ const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
         title: "Success!",
         description: "Welcome back!",
       });
-      onSuccess && onSuccess();
+      onSuccess && onSuccess({
+        email: formData.email,
+        name: formData.name,
+        role: mode === "login" ? (formData.email.includes("admin") ? "admin" : "intern") : role,
+        internId: role === "intern" ? (formData.internId || `IIH${String(Date.now()).slice(-3)}`) : undefined,
+        phone: formData.phone
+      });
       setIsLoading(false);
     }, 1500);
   };
