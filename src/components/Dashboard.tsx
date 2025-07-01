@@ -5,7 +5,7 @@ import { Calendar, Clock, User, LogOut, Users, BarChart3, AlertTriangle } from "
 import { useToast } from "@/hooks/use-toast";
 import AttendanceCard from "./AttendanceCard";
 import AttendanceHistory from "./AttendanceHistory";
-import AdminPanel from "./AdminPanel";
+import AdminDashboard from "./AdminDashboard";
 
 // ----- Helper for geolocation and distance -----
 const HUB_COORDS = { lat: 8.4967, lng: 4.5519 }; // Replace with real hub location if needed
@@ -411,7 +411,7 @@ const Dashboard = ({ user, onLogout }) => {
         )}
 
         {activeTab === "admin" && user.role === "admin" && (
-          <AdminPanel />
+          <AdminDashboard user={user} onLogout={onLogout} />
         )}
       </div>
     </div>

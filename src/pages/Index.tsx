@@ -6,7 +6,7 @@ import Dashboard from "@/components/Dashboard";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState("landing"); // landing, auth, dashboard
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any>(null);
   const [authMode, setAuthMode] = useState("login"); // login, register
 
   const handleAuthSuccess = (userData) => {

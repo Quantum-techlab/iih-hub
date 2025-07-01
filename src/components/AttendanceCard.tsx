@@ -8,8 +8,9 @@ const AttendanceCard = ({ user, currentTime, isWeekday, onSignIn, onSignOut }) =
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const formatTime = (date) => {
-    return date.toLocaleTimeString('en-US', {
+  const formatTime = (date: Date | string) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
       timeZone: 'Africa/Lagos'
