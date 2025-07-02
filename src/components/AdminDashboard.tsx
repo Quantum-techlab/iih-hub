@@ -7,8 +7,8 @@ import { Users, Download, Search, TrendingUp, Clock, MapPin, CheckCircle, XCircl
 import { useToast } from "@/hooks/use-toast";
 import InternAnalytics from "./InternAnalytics";
 
-// Ilorin Innovation Hub coordinates
-const HUB_COORDS = { lat: 8.4799, lng: 4.5418 };
+// Real Ilorin Innovation Hub coordinates from Google Maps
+const HUB_COORDS = { lat: 8.479898, lng: 4.541840 };
 
 // Calculate distance using Haversine formula
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -159,7 +159,7 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
     }
   ];
 
-  // Pending sign-ins mock data
+  // Pending sign-ins mock data with updated coordinates
   const [pendingSignIns, setPendingSignIns] = useState([
     {
       id: 11,
@@ -168,7 +168,7 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
       email: "samuel@example.com",
       signInTime: "2025-06-30T08:55:00Z",
       signOutTime: null,
-      location: { latitude: 8.4801, longitude: 4.5420 },
+      location: { latitude: 8.479950, longitude: 4.541900 },
       status: "pending"
     },
     {
@@ -178,8 +178,8 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
       email: "mary@example.com",
       signInTime: "2025-06-30T09:10:00Z",
       signOutTime: "2025-06-30T17:15:00Z",
-      location: { latitude: 8.4799, longitude: 4.5418 },
-      signOutLocation: { latitude: 8.4800, longitude: 4.5419 },
+      location: { latitude: 8.479898, longitude: 4.541840 },
+      signOutLocation: { latitude: 8.479910, longitude: 4.541850 },
       status: "pending"
     },
   ]);
@@ -351,10 +351,10 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
                         <div className="flex items-center gap-2 text-xs">
                           <MapPin className="w-3 h-3 text-blue-600" />
                           <span className="text-blue-600">
-                            Distance from Hub: {distance < 1000 ? `${distance.toFixed(0)}m` : `${(distance/1000).toFixed(2)}km`}
+                            Distance from IIH: {distance < 1000 ? `${distance.toFixed(0)}m` : `${(distance/1000).toFixed(2)}km`}
                           </span>
                           <span className="text-gray-400">
-                            ({signIn.location?.latitude?.toFixed(4)}, {signIn.location?.longitude?.toFixed(4)})
+                            ({signIn.location?.latitude?.toFixed(6)}, {signIn.location?.longitude?.toFixed(6)})
                           </span>
                         </div>
                       </div>

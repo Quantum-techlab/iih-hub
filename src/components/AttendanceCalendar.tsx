@@ -1,10 +1,10 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 
-const HUB_COORDS = { lat: 8.4967, lng: 4.5519 };
+// Real Ilorin Innovation Hub coordinates from Google Maps
+const HUB_COORDS = { lat: 8.479898, lng: 4.541840 };
 
 function haversine(lat1, lon1, lat2, lon2) {
   const toRad = x => (x * Math.PI) / 180;
@@ -44,6 +44,11 @@ const AttendanceCalendar = ({ attendance = {} }) => {
         () => {
           alert("Location permission denied or unavailable");
           setLoading(false);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000
         }
       );
     } else {
@@ -113,7 +118,7 @@ const AttendanceCalendar = ({ attendance = {} }) => {
         </Button>
         {distance !== null && (
           <div className="mt-2 text-blue-700 font-medium">
-            You are {distance < 1000 ? `${distance.toFixed(1)} meters` : `${(distance/1000).toFixed(2)} km`} from the hub.
+            You are {distance < 1000 ? `${distance.toFixed(1)} meters` : `${(distance/1000).toFixed(2)} km`} from Ilorin Innovation Hub.
           </div>
         )}
       </CardContent>
