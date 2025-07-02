@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -101,68 +102,72 @@ const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto py-6 px-2 sm:px-4 bg-black/30">
-      {/* Animated SVG Background */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto py-4 px-4 bg-black/50 backdrop-blur-sm">
+      {/* Animated backgrounds */}
       <div className="auth-bg-animated">
         <svg className="blob1" viewBox="0 0 700 700"><defs><linearGradient id="b1" x1="0" x2="1" y1="0" y2="1"><stop stopColor="#a5b4fc"/><stop offset="1" stopColor="#fbcfe8"/></linearGradient></defs><ellipse cx="350" cy="350" rx="340" ry="320" fill="url(#b1)" /></svg>
         <svg className="blob2" viewBox="0 0 700 700"><defs><linearGradient id="b2" x1="0" x2="1" y1="0" y2="1"><stop stopColor="#fcd34d"/><stop offset="1" stopColor="#bae6fd"/></linearGradient></defs><ellipse cx="350" cy="350" rx="320" ry="330" fill="url(#b2)" /></svg>
         <svg className="blob3" viewBox="0 0 800 800"><defs><linearGradient id="b3" x1="0" x2="1" y1="0" y2="1"><stop stopColor="#f0abfc"/><stop offset="1" stopColor="#bbf7d0"/></linearGradient></defs><ellipse cx="400" cy="400" rx="350" ry="280" fill="url(#b3)" /></svg>
       </div>
-      {/* Modal Card */}
-      <div className="relative z-10 w-full max-w-md mx-auto bg-white/95 backdrop-blur-lg rounded-xl shadow-xl p-5 sm:p-8 overflow-hidden">
-        <CardHeader className="text-center relative pb-2">
+
+      {/* Modal Card - Improved mobile responsiveness */}
+      <div className="relative z-10 w-full max-w-md mx-auto bg-white/98 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
+        {/* Header with improved X button */}
+        <CardHeader className="text-center relative pb-4 pt-6 px-6">
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="absolute right-2 top-2 h-8 w-8 p-0"
+            className="absolute right-3 top-3 h-9 w-9 p-0 rounded-full bg-gray-100/80 hover:bg-gray-200/80 transition-colors z-10"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4 text-gray-600" />
           </Button>
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+          <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
             <Calendar className="w-8 h-8 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-900">
+          <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
             {mode === "login" ? "Welcome Back" : "Join IIH"}
           </CardTitle>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-sm">
             {mode === "login"
               ? "Sign in to track your attendance"
               : "Create your attendance account"}
           </p>
         </CardHeader>
-        <CardContent>
+
+        <CardContent className="px-6 pb-6">
           {showConfirmation ? (
-            <div className="py-10 text-center">
+            <div className="py-8 text-center">
               <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
-                <svg className="w-10 h-10 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                <svg className="w-8 h-8 text-green-600" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707a1 1 0 00-1.414-1.414L9 11.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Check your email to confirm registration</h3>
-              <p className="text-gray-600">You'll be redirected to sign in shortly...</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Check your email</h3>
+              <p className="text-gray-600 text-sm">Confirmation sent! Redirecting to sign in...</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4 max-h-[75vh] overflow-y-auto">
+            <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto">
               {mode === "register" && (
                 <>
                   {/* Role Selector */}
                   <div className="space-y-2">
-                    <Label htmlFor="role">Registering as</Label>
+                    <Label htmlFor="role" className="text-sm font-medium">Registering as</Label>
                     <select
                       id="role"
                       name="role"
                       value={role}
                       onChange={handleRoleChange}
-                      className="h-11 w-full border rounded px-2"
+                      className="h-12 w-full border border-gray-300 rounded-lg px-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
                     >
                       <option value="intern">Intern</option>
                       <option value="admin">Admin</option>
                     </select>
                   </div>
+
                   {/* Name */}
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
                     <Input
                       id="name"
                       name="name"
@@ -171,12 +176,13 @@ const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="h-11"
+                      className="h-12 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
+
                   {/* Phone */}
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
+                    <Label htmlFor="phone" className="text-sm font-medium">Phone Number</Label>
                     <Input
                       id="phone"
                       name="phone"
@@ -185,13 +191,14 @@ const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       required
-                      className="h-11"
+                      className="h-12 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
-                  {/* Intern ID (optional) */}
+
+                  {/* Conditional fields based on role */}
                   {role === "intern" && (
                     <div className="space-y-2">
-                      <Label htmlFor="internId">Intern ID (optional)</Label>
+                      <Label htmlFor="internId" className="text-sm font-medium">Intern ID (optional)</Label>
                       <Input
                         id="internId"
                         name="internId"
@@ -199,14 +206,14 @@ const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
                         placeholder="Your unique intern ID"
                         value={formData.internId}
                         onChange={handleInputChange}
-                        className="h-11"
+                        className="h-12 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
                   )}
-                  {/* Admin Code (required) */}
+
                   {role === "admin" && (
                     <div className="space-y-2">
-                      <Label htmlFor="adminCode">Admin Access Code</Label>
+                      <Label htmlFor="adminCode" className="text-sm font-medium">Admin Access Code</Label>
                       <Input
                         id="adminCode"
                         name="adminCode"
@@ -215,7 +222,7 @@ const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
                         value={formData.adminCode}
                         onChange={handleInputChange}
                         required
-                        className="h-11"
+                        className="h-12 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
                   )}
@@ -224,7 +231,7 @@ const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
 
               {/* Email */}
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
                 <Input
                   id="email"
                   name="email"
@@ -233,12 +240,13 @@ const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="h-11"
+                  className="h-12 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
+
               {/* Password */}
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-sm font-medium">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -248,23 +256,24 @@ const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
                     value={formData.password}
                     onChange={handleInputChange}
                     required
-                    className="h-11 pr-10"
+                    className="h-12 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-gray-100"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? <EyeOff className="w-4 h-4 text-gray-500" /> : <Eye className="w-4 h-4 text-gray-500" />}
                   </Button>
                 </div>
               </div>
+
               {/* Confirm Password */}
               {mode === "register" && (
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</Label>
                   <Input
                     id="confirmPassword"
                     name="confirmPassword"
@@ -273,18 +282,19 @@ const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     required
-                    className="h-11"
+                    className="h-12 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               )}
 
+              {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium"
+                className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl mt-6"
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-center space-x-2">
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     <span>{mode === "login" ? "Signing In..." : "Creating Account..."}</span>
                   </div>
@@ -294,22 +304,26 @@ const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
               </Button>
             </form>
           )}
+
+          {/* Switch Mode */}
           <div className="mt-6 text-center">
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm">
               {mode === "login" ? "Don't have an account?" : "Already have an account?"}
               <Button
                 variant="link"
-                className="p-0 ml-1 text-blue-600 hover:text-blue-700"
+                className="p-0 ml-1 text-blue-600 hover:text-blue-700 text-sm"
                 onClick={() => onSwitchMode(mode === "login" ? "register" : "login")}
               >
                 {mode === "login" ? "Sign up" : "Sign in"}
               </Button>
             </p>
           </div>
+
+          {/* Demo Accounts - This will be removed when Supabase is connected */}
           {mode === "login" && (
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-700">
-                <strong>Demo Accounts:</strong><br />
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-xs text-blue-700">
+                <strong>Demo Accounts (Remove when Supabase connected):</strong><br />
                 Admin: admin@iih.ng / password<br />
                 Intern: intern@iih.ng / password
               </p>
