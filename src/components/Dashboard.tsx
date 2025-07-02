@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, User, LogOut, Users, BarChart3, AlertTriangle } from "lucide-react";
+import { Calendar, Clock, User, LogOut, Users, Settings, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import AttendanceCard from "./AttendanceCard";
 import AttendanceHistory from "./AttendanceHistory";
 import AdminDashboard from "./AdminDashboard";
+import UserProfile from "./UserProfile";
 
 // ----- Helper for geolocation and distance -----
 const HUB_COORDS = { lat: 8.4967, lng: 4.5519 }; // Replace with real hub location if needed
@@ -127,7 +128,7 @@ const AttendanceCalendarWithLocation = ({ attendance = {} }) => {
 
 const Dashboard = ({ user, onLogout }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState(user.role === "admin" ? "admin" : "overview");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -265,6 +266,13 @@ const Dashboard = ({ user, onLogout }) => {
               </div>
               <Button
                 variant="ghost"
+                onClick={() => setActiveTab("profile")}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <Settings className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={onLogout}
                 className="text-gray-600 hover:text-gray-900"
               >
@@ -288,33 +296,52 @@ const Dashboard = ({ user, onLogout }) => {
 
         {/* Navigation Tabs */}
         <div className="flex flex-wrap gap-2 mb-8 p-1 bg-gray-100/50 rounded-lg w-fit">
-          <TabButton
-            id="overview"
-            icon={Calendar}
-            label="Overview"
-            isActive={activeTab === "overview"}
-            onClick={() => setActiveTab("overview")}
-          />
-          <TabButton
-            id="history"
-            icon={Clock}
-            label="History"
-            isActive={activeTab === "history"}
-            onClick={() => setActiveTab("history")}
-          />
-          {user.role === "admin" && (
-            <TabButton
-              id="admin"
-              icon={Users}
-              label="Admin Panel"
-              isActive={activeTab === "admin"}
-              onClick={() => setActiveTab("admin")}
-            />
+          {user.role === "admin" ? (
+            <>
+              <TabButton
+                id="admin"
+                icon={Users}
+                label="Admin Panel"
+                isActive={activeTab === "admin"}
+                onClick={() => setActiveTab("admin")}
+              />
+              <TabButton
+                id="profile"
+                icon={User}
+                label="Profile"
+                isActive={activeTab === "profile"}
+                onClick={() => setActiveTab("profile")}
+              />
+            </>
+          ) : (
+            <>
+              <TabButton
+                id="overview"
+                icon={Calendar}
+                label="Overview"
+                isActive={activeTab === "overview"}
+                onClick={() => setActiveTab("overview")}
+              />
+              <TabButton
+                id="history"
+                icon={Clock}
+                label="History"
+                isActive={activeTab === "history"}
+                onClick={() => setActiveTab("history")}
+              />
+              <TabButton
+                id="profile"
+                icon={User}
+                label="Profile"
+                isActive={activeTab === "profile"}
+                onClick={() => setActiveTab("profile")}
+              />
+            </>
           )}
         </div>
 
         {/* Content */}
-        {activeTab === "overview" && (
+        {activeTab === "overview" && user.role !== "admin" && (
           <div className="space-y-6">
             {/* Status Cards */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -329,7 +356,7 @@ const Dashboard = ({ user, onLogout }) => {
               <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center space-x-2">
-                    <BarChart3 className="w-5 h-5 text-green-600" />
+                    <Calendar className="w-5 h-5 text-green-600" />
                     <span>This Week</span>
                   </CardTitle>
                 </CardHeader>
@@ -352,7 +379,7 @@ const Dashboard = ({ user, onLogout }) => {
               <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center space-x-2">
-                    <AlertTriangle className="w-5 h-5 text-orange-500" />
+                    <Clock className="w-5 h-5 text-orange-500" />
                     <span>Missed Days</span>
                   </CardTitle>
                 </CardHeader>
@@ -372,10 +399,8 @@ const Dashboard = ({ user, onLogout }) => {
               </Card>
             </div>
 
-            {/* --- Attendance Calendar & Geolocation --- */}
-            {user.role !== "admin" && (
-              <AttendanceCalendarWithLocation attendance={user.attendance || {}} />
-            )}
+            {/* Attendance Calendar & Geolocation */}
+            <AttendanceCalendarWithLocation attendance={user.attendance || {}} />
 
             {/* Quick Stats */}
             <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
@@ -406,12 +431,16 @@ const Dashboard = ({ user, onLogout }) => {
           </div>
         )}
 
-        {activeTab === "history" && (
+        {activeTab === "history" && user.role !== "admin" && (
           <AttendanceHistory user={user} />
         )}
 
         {activeTab === "admin" && user.role === "admin" && (
           <AdminDashboard user={user} onLogout={onLogout} />
+        )}
+
+        {activeTab === "profile" && (
+          <UserProfile user={user} onLogout={onLogout} />
         )}
       </div>
     </div>
