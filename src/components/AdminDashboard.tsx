@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Users, Download, Search, TrendingUp, Clock, MapPin, CheckCircle, XCircle } from "lucide-react";
+import { Users, Download, Search, TrendingUp, Clock, MapPin, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import InternAnalytics from "./InternAnalytics";
 
 // Ilorin Innovation Hub coordinates
 const HUB_COORDS = { lat: 8.4799, lng: 4.5418 };
@@ -28,49 +29,133 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const [selectedIntern, setSelectedIntern] = useState(null);
   const { toast } = useToast();
 
-  // Mock data for demonstration
+  // Mock data for demonstration with enhanced details
   const interns = [
     {
       id: 1,
       name: "Adebayo Oluwaseun",
       internId: "IIH001",
       email: "adebayo@example.com",
+      phone: "+234 806 123 4567",
       attendanceRate: 95,
       missedDays: 1,
       lastSignIn: new Date(2025, 5, 19, 8, 30),
-      status: "signed_in"
+      status: "signed_in",
+      joinDate: "2024-12-01",
+      department: "Software Development",
+      supervisor: "Dr. Aisha Mohammed",
+      monthlyData: {
+        "2025-01": { totalDays: 22, presentDays: 21, absentDays: 1, rate: 95.5 },
+        "2024-12": { totalDays: 20, presentDays: 19, absentDays: 1, rate: 95.0 },
+        "2024-11": { totalDays: 21, presentDays: 20, absentDays: 1, rate: 95.2 },
+        "2024-10": { totalDays: 23, presentDays: 22, absentDays: 1, rate: 95.7 }
+      },
+      missedDaysDetails: [
+        { date: "2025-01-15", reason: "Medical appointment", type: "excused" },
+        { date: "2024-12-20", reason: "Family emergency", type: "excused" },
+        { date: "2024-11-10", reason: "Sick leave", type: "excused" }
+      ],
+      timeAnalytics: {
+        avgSignIn: "08:25",
+        avgSignOut: "17:15",
+        totalHours: 168.5,
+        punctualityRate: 92
+      }
     },
     {
       id: 2,
       name: "Fatima Hassan",
       internId: "IIH002",
       email: "fatima@example.com",
+      phone: "+234 807 234 5678",
       attendanceRate: 88,
       missedDays: 3,
       lastSignIn: new Date(2025, 5, 18, 9, 15),
-      status: "absent"
+      status: "absent",
+      joinDate: "2024-11-15",
+      department: "Data Science",
+      supervisor: "Prof. Ibrahim Yusuf",
+      monthlyData: {
+        "2025-01": { totalDays: 22, presentDays: 19, absentDays: 3, rate: 86.4 },
+        "2024-12": { totalDays: 20, presentDays: 18, absentDays: 2, rate: 90.0 },
+        "2024-11": { totalDays: 15, presentDays: 14, absentDays: 1, rate: 93.3 }
+      },
+      missedDaysDetails: [
+        { date: "2025-01-20", reason: "Unexcused absence", type: "unexcused" },
+        { date: "2025-01-12", reason: "Internet connectivity issues", type: "excused" },
+        { date: "2025-01-05", reason: "Transportation strike", type: "excused" },
+        { date: "2024-12-18", reason: "Sick leave", type: "excused" },
+        { date: "2024-12-08", reason: "Personal matter", type: "excused" }
+      ],
+      timeAnalytics: {
+        avgSignIn: "08:45",
+        avgSignOut: "17:20",
+        totalHours: 152.3,
+        punctualityRate: 78
+      }
     },
     {
       id: 3,
       name: "Chinedu Okoro",
       internId: "IIH003",
       email: "chinedu@example.com",
+      phone: "+234 808 345 6789",
       attendanceRate: 100,
       missedDays: 0,
       lastSignIn: new Date(2025, 5, 19, 8, 45),
-      status: "signed_out"
+      status: "signed_out",
+      joinDate: "2024-10-01",
+      department: "UI/UX Design",
+      supervisor: "Mrs. Kemi Adebayo",
+      monthlyData: {
+        "2025-01": { totalDays: 22, presentDays: 22, absentDays: 0, rate: 100 },
+        "2024-12": { totalDays: 20, presentDays: 20, absentDays: 0, rate: 100 },
+        "2024-11": { totalDays: 21, presentDays: 21, absentDays: 0, rate: 100 },
+        "2024-10": { totalDays: 22, presentDays: 22, absentDays: 0, rate: 100 }
+      },
+      missedDaysDetails: [],
+      timeAnalytics: {
+        avgSignIn: "08:15",
+        avgSignOut: "17:30",
+        totalHours: 184.0,
+        punctualityRate: 100
+      }
     },
     {
       id: 4,
       name: "Aisha Abdullahi",
       internId: "IIH004",
       email: "aisha@example.com",
+      phone: "+234 809 456 7890",
       attendanceRate: 92,
       missedDays: 2,
       lastSignIn: new Date(2025, 5, 19, 9, 0),
-      status: "signed_in"
+      status: "signed_in",
+      joinDate: "2024-09-15",
+      department: "Digital Marketing",
+      supervisor: "Mr. Tunde Olatunji",
+      monthlyData: {
+        "2025-01": { totalDays: 22, presentDays: 20, absentDays: 2, rate: 90.9 },
+        "2024-12": { totalDays: 20, presentDays: 19, absentDays: 1, rate: 95.0 },
+        "2024-11": { totalDays: 21, presentDays: 20, absentDays: 1, rate: 95.2 },
+        "2024-10": { totalDays: 23, presentDays: 21, absentDays: 2, rate: 91.3 },
+        "2024-09": { totalDays: 15, presentDays: 14, absentDays: 1, rate: 93.3 }
+      },
+      missedDaysDetails: [
+        { date: "2025-01-18", reason: "Medical appointment", type: "excused" },
+        { date: "2025-01-08", reason: "Family event", type: "excused" },
+        { date: "2024-12-25", reason: "Holiday", type: "excused" },
+        { date: "2024-11-15", reason: "Sick leave", type: "excused" }
+      ],
+      timeAnalytics: {
+        avgSignIn: "08:35",
+        avgSignOut: "17:10",
+        totalHours: 162.8,
+        punctualityRate: 85
+      }
     }
   ];
 
@@ -172,6 +257,16 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
     averageAttendance: Math.round(interns.reduce((sum, i) => sum + i.attendanceRate, 0) / interns.length)
   };
 
+  // If an intern is selected, show their analytics
+  if (selectedIntern) {
+    return (
+      <InternAnalytics 
+        intern={selectedIntern} 
+        onBack={() => setSelectedIntern(null)} 
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Header */}
@@ -209,7 +304,7 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome, {user.name}!
+            Welcome back, {user.name}!
           </h2>
           <p className="text-lg text-gray-600">
             Manage intern attendance and track performance
@@ -365,7 +460,8 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
               {filteredInterns.map((intern) => (
                 <div
                   key={intern.id}
-                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border border-gray-200 bg-white/50 hover:bg-white/70 transition-colors"
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border border-gray-200 bg-white/50 hover:bg-white/70 transition-colors cursor-pointer"
+                  onClick={() => setSelectedIntern(intern)}
                 >
                   <div className="flex-1">
                     <div className="flex items-center space-x-3">
@@ -388,6 +484,9 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
                         </span>
                       )}
                     </div>
+                  </div>
+                  <div className="text-sm text-blue-600 mt-2 sm:mt-0">
+                    Click to view analytics →
                   </div>
                 </div>
               ))}
