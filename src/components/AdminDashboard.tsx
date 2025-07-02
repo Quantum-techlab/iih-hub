@@ -168,7 +168,7 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
       email: "samuel@example.com",
       signInTime: "2025-06-30T08:55:00Z",
       signOutTime: null,
-      location: { latitude: 8.479950, longitude: 4.541900 },
+      location: { latitude: 8.479900, longitude: 4.541845 },
       status: "pending"
     },
     {
@@ -178,8 +178,8 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
       email: "mary@example.com",
       signInTime: "2025-06-30T09:10:00Z",
       signOutTime: "2025-06-30T17:15:00Z",
-      location: { latitude: 8.479898, longitude: 4.541840 },
-      signOutLocation: { latitude: 8.479910, longitude: 4.541850 },
+      location: { latitude: 8.479895, longitude: 4.541835 },
+      signOutLocation: { latitude: 8.479905, longitude: 4.541850 },
       status: "pending"
     },
   ]);

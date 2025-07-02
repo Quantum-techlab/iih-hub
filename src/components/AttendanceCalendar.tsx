@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +9,7 @@ const HUB_COORDS = { lat: 8.479898, lng: 4.541840 };
 
 function haversine(lat1, lon1, lat2, lon2) {
   const toRad = x => (x * Math.PI) / 180;
-  const R = 6371000;
+  const R = 6371000; // Earth's radius in meters
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a =
@@ -25,6 +26,7 @@ const AttendanceCalendar = ({ attendance = {} }) => {
   const [today] = useState(new Date());
   const [distance, setDistance] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
 
   const year = today.getFullYear();
   const month = today.getMonth();
@@ -37,18 +39,25 @@ const AttendanceCalendar = ({ attendance = {} }) => {
       navigator.geolocation.getCurrentPosition(
         pos => {
           const { latitude, longitude } = pos.coords;
+          console.log("User location:", latitude, longitude);
+          console.log("Hub location:", HUB_COORDS.lat, HUB_COORDS.lng);
+          
+          setUserLocation({ lat: latitude, lng: longitude });
           const dist = haversine(latitude, longitude, HUB_COORDS.lat, HUB_COORDS.lng);
+          console.log("Calculated distance:", dist, "meters");
+          
           setDistance(dist);
           setLoading(false);
         },
-        () => {
-          alert("Location permission denied or unavailable");
+        (error) => {
+          console.error("Geolocation error:", error);
+          alert(`Location error: ${error.message}`);
           setLoading(false);
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 60000
+          timeout: 15000,
+          maximumAge: 0
         }
       );
     } else {
@@ -117,8 +126,15 @@ const AttendanceCalendar = ({ attendance = {} }) => {
           {loading ? "Getting location..." : "Check Distance to Hub"}
         </Button>
         {distance !== null && (
-          <div className="mt-2 text-blue-700 font-medium">
-            You are {distance < 1000 ? `${distance.toFixed(1)} meters` : `${(distance/1000).toFixed(2)} km`} from Ilorin Innovation Hub.
+          <div className="mt-2">
+            <div className="text-blue-700 font-medium">
+              You are {distance < 1000 ? `${distance.toFixed(1)} meters` : `${(distance/1000).toFixed(2)} km`} from Ilorin Innovation Hub.
+            </div>
+            {userLocation && (
+              <div className="text-xs text-gray-500 mt-1">
+                Your location: {userLocation.lat.toFixed(6)}, {userLocation.lng.toFixed(6)}
+              </div>
+            )}
           </div>
         )}
       </CardContent>
