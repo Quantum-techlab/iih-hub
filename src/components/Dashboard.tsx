@@ -9,10 +9,12 @@ import AdminDashboard from "./AdminDashboard";
 import UserProfile from "./UserProfile";
 import AttendanceCalendar from "./AttendanceCalendar";
 import DashboardNavigation from "./DashboardNavigation";
+import LogoutConfirmation from "./LogoutConfirmation";
 
 const Dashboard = ({ user, onLogout }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeTab, setActiveTab] = useState(user.role === "admin" ? "admin" : "overview");
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -45,6 +47,19 @@ const Dashboard = ({ user, onLogout }) => {
   const isWeekday = () => {
     const day = currentTime.getDay();
     return day >= 1 && day <= 5; // Monday to Friday
+  };
+
+  const handleLogoutClick = () => {
+    setShowLogoutDialog(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    setShowLogoutDialog(false);
+    toast({
+      title: "Signed Out",
+      description: "You have been successfully signed out.",
+    });
+    onLogout();
   };
 
   const handleSignIn = (data) => {
@@ -136,14 +151,14 @@ const Dashboard = ({ user, onLogout }) => {
               <Button
                 variant="ghost"
                 onClick={() => setActiveTab("profile")}
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <Settings className="w-4 h-4" />
               </Button>
               <Button
                 variant="ghost"
-                onClick={onLogout}
-                className="text-gray-600 hover:text-gray-900"
+                onClick={handleLogoutClick}
+                className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <LogOut className="w-4 h-4" />
               </Button>
@@ -262,13 +277,21 @@ const Dashboard = ({ user, onLogout }) => {
         )}
 
         {activeTab === "admin" && user.role === "admin" && (
-          <AdminDashboard user={user} onLogout={onLogout} />
+          <AdminDashboard user={user} onLogout={handleLogoutConfirm} />
         )}
 
         {activeTab === "profile" && (
-          <UserProfile user={user} onLogout={onLogout} />
+          <UserProfile user={user} onLogout={handleLogoutConfirm} />
         )}
       </div>
+
+      {/* Logout Confirmation Dialog */}
+      <LogoutConfirmation
+        isOpen={showLogoutDialog}
+        onClose={() => setShowLogoutDialog(false)}
+        onConfirm={handleLogoutConfirm}
+        userName={user.name}
+      />
     </div>
   );
 };

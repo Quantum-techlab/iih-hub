@@ -2,6 +2,9 @@ import { Calendar, Clock, Users, Shield, ChevronRight, CheckCircle } from "lucid
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import TypewriterText from "./TypewriterText";
+import MarqueeAlongSvgPath from "./MarqueeAlongSvgPath";
+import { useState } from "react";
 
 const features = [
   {
@@ -40,9 +43,42 @@ const cardVariant = {
   visible: { opacity: 1, y: 0 }
 };
 
+// SVG path for the marquee
+const path = "M1 209.434C58.5872 255.935 387.926 325.938 482.583 209.434C600.905 63.8051 525.516 -43.2211 427.332 19.9613C329.149 83.1436 352.902 242.723 515.041 267.302C644.752 286.966 943.56 181.94 995 156.5";
+
+// Innovation-themed images for the marquee
+const innovationImages = [
+  {
+    src: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400",
+    alt: "Innovation Hub"
+  },
+  {
+    src: "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=400",
+    alt: "Technology"
+  },
+  {
+    src: "https://images.pexels.com/photos/3184293/pexels-photo-3184293.jpeg?auto=compress&cs=tinysrgb&w=400",
+    alt: "Collaboration"
+  },
+  {
+    src: "https://images.pexels.com/photos/3184294/pexels-photo-3184294.jpeg?auto=compress&cs=tinysrgb&w=400",
+    alt: "Innovation"
+  },
+  {
+    src: "https://images.pexels.com/photos/3184295/pexels-photo-3184295.jpeg?auto=compress&cs=tinysrgb&w=400",
+    alt: "Development"
+  },
+  {
+    src: "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=400",
+    alt: "Learning"
+  }
+];
+
 const LandingPage = ({ onOpenAuth }) => {
+  const [typewriterComplete, setTypewriterComplete] = useState(false);
+
   return (
-    <div className="animated-bg-nice min-h-screen w-full">
+    <div className="animated-bg-nice min-h-screen w-full relative overflow-hidden">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -60,13 +96,13 @@ const LandingPage = ({ onOpenAuth }) => {
               <Button
                 variant="ghost"
                 onClick={() => onOpenAuth("login")}
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-600 hover:text-gray-900 transition-all duration-300 hover:scale-105"
               >
                 Sign In
               </Button>
               <Button
                 onClick={() => onOpenAuth("register")}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
                 Get Started
               </Button>
@@ -83,40 +119,93 @@ const LandingPage = ({ onOpenAuth }) => {
         className="relative py-20 px-4 sm:px-6 lg:px-8"
       >
         <div className="max-w-7xl mx-auto">
-          <div className="text-center">
+          <div className="text-center relative z-10">
             <motion.div variants={sectionVariant}>
               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                Track Your Attendance at
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                  Ilorin Innovation Hub
-                </span>
+                <TypewriterText 
+                  text="Track Your Attendance at"
+                  speed={60}
+                  onComplete={() => setTypewriterComplete(true)}
+                />
+                {typewriterComplete && (
+                  <motion.span 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600"
+                  >
+                    Ilorin Innovation Hub
+                  </motion.span>
+                )}
               </h1>
-              <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: typewriterComplete ? 1 : 0 }}
+                transition={{ delay: 0.8 }}
+                className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
+              >
                 Professional attendance tracking system designed for interns. 
                 Sign in daily, track your progress, and never miss a workday.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
-                  <Button
-                    size="lg"
-                    onClick={() => onOpenAuth("register")}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-                  >
-                    Start Tracking Today
-                    <ChevronRight className="w-5 h-5 ml-2" />
-                  </Button>
+              </motion.p>
+              
+              {typewriterComplete && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.2 }}
+                  className="flex flex-col sm:flex-row gap-4 justify-center items-center relative"
+                >
+                  {/* Fancy Marquee Component */}
+                  <div className="relative">
+                    <MarqueeAlongSvgPath
+                      path={path}
+                      baseVelocity={8}
+                      slowdownOnHover={true}
+                      draggable={true}
+                      repeat={2}
+                      dragSensitivity={0.1}
+                      className="absolute -left-24 sm:-left-32 top-32 scale-60 sm:scale-100 pointer-events-none"
+                      grabCursor
+                    >
+                      {innovationImages.map((img, i) => (
+                        <div
+                          key={i}
+                          className="w-14 h-14 hover:scale-150 duration-300 ease-in-out rounded-lg overflow-hidden shadow-lg"
+                        >
+                          <img
+                            src={img.src}
+                            alt={img.alt}
+                            className="w-full h-full object-cover"
+                            draggable={false}
+                          />
+                        </div>
+                      ))}
+                    </MarqueeAlongSvgPath>
+                    
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                      <Button
+                        size="lg"
+                        onClick={() => onOpenAuth("register")}
+                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 relative z-10"
+                      >
+                        Start Tracking Today
+                        <ChevronRight className="w-5 h-5 ml-2" />
+                      </Button>
+                    </motion.div>
+                  </div>
+                  
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      onClick={() => onOpenAuth("login")}
+                      className="px-8 py-4 text-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition-all duration-300 bg-white/80 backdrop-blur-sm"
+                    >
+                      Sign In
+                    </Button>
+                  </motion.div>
                 </motion.div>
-                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    onClick={() => onOpenAuth("login")}
-                    className="px-8 py-4 text-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition-all duration-300"
-                  >
-                    Sign In
-                  </Button>
-                </motion.div>
-              </div>
+              )}
             </motion.div>
           </div>
         </div>
@@ -199,10 +288,16 @@ const LandingPage = ({ onOpenAuth }) => {
                   "Real-time dashboard updates",
                   "Secure authentication system"
                 ].map((item, index) => (
-                  <div key={index} className="flex items-center space-x-3">
+                  <motion.div 
+                    key={index} 
+                    className="flex items-center space-x-3"
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
                     <CheckCircle className="w-5 h-5 text-green-500" />
                     <span className="text-gray-700">{item}</span>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
@@ -221,7 +316,7 @@ const LandingPage = ({ onOpenAuth }) => {
               </p>
               <Button
                 onClick={() => onOpenAuth("register")}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-all duration-300 hover:scale-105"
               >
                 Get Started Now
               </Button>
@@ -260,6 +355,7 @@ const LandingPage = ({ onOpenAuth }) => {
               <h4 className="font-semibold text-lg mb-4">Contact Info</h4>
               <div className="text-gray-400 space-y-2">
                 <p>Ilorin Innovation Hub</p>
+                <p>8°28'56.5"N, 4°34'37.6"E</p>
                 <p>Ilorin, Kwara State, Nigeria</p>
                 <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
               </div>

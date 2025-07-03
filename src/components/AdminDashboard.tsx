@@ -3,9 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Users, Download, Search, TrendingUp, Clock, MapPin, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
+import { Users, Download, Search, TrendingUp, Clock, MapPin, CheckCircle, XCircle, ArrowLeft, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import InternAnalytics from "./InternAnalytics";
+import LogoutConfirmation from "./LogoutConfirmation";
 
 // Exact Ilorin Innovation Hub coordinates: 8°28'56.5"N 4°34'37.6"E
 const HUB_COORDS = { 
@@ -30,10 +31,11 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c; // Distance in meters
 };
 
-const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
+const AdminDashboard = ({ user, onLogout }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [selectedIntern, setSelectedIntern] = useState(null);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const { toast } = useToast();
 
   // Mock data for demonstration with enhanced details
@@ -260,6 +262,15 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
     }, 2000);
   };
 
+  const handleLogoutClick = () => {
+    setShowLogoutDialog(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    setShowLogoutDialog(false);
+    onLogout();
+  };
+
   const filteredInterns = interns.filter(intern => {
     const matchesSearch = intern.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          intern.internId.toLowerCase().includes(searchTerm.toLowerCase());
@@ -312,10 +323,10 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
               </div>
               <Button
                 variant="ghost"
-                onClick={onLogout}
-                className="text-gray-600 hover:text-gray-900"
+                onClick={handleLogoutClick}
+                className="text-gray-600 hover:text-gray-900 transition-colors"
               >
-                <Clock className="w-4 h-4" />
+                <LogOut className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -516,6 +527,14 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
           </CardContent>
         </Card>
       </div>
+
+      {/* Logout Confirmation Dialog */}
+      <LogoutConfirmation
+        isOpen={showLogoutDialog}
+        onClose={() => setShowLogoutDialog(false)}
+        onConfirm={handleLogoutConfirm}
+        userName={user.name}
+      />
     </div>
   );
 };
