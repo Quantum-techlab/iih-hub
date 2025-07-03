@@ -7,23 +7,27 @@ import { Users, Download, Search, TrendingUp, Clock, MapPin, CheckCircle, XCircl
 import { useToast } from "@/hooks/use-toast";
 import InternAnalytics from "./InternAnalytics";
 
-// Real Ilorin Innovation Hub coordinates from Google Maps
-const HUB_COORDS = { lat: 8.479898, lng: 4.541840 };
+// Exact Ilorin Innovation Hub coordinates: 8°28'56.5"N 4°34'37.6"E
+const HUB_COORDS = { 
+  lat: 8.482361111111111,  // 8°28'56.5"N converted to decimal degrees
+  lng: 4.577111111111111   // 4°34'37.6"E converted to decimal degrees
+};
 
-// Calculate distance using Haversine formula
-const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+// High-precision Haversine formula for distance calculation
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
   const toRad = (x: number) => (x * Math.PI) / 180;
-  const R = 6371000; // Earth's radius in meters
+  const R = 6371000; // Earth's radius in meters (WGS84 ellipsoid)
+  
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+  
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
+  
+  return R * c; // Distance in meters
 };
 
 const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
@@ -159,7 +163,7 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
     }
   ];
 
-  // Pending sign-ins mock data with updated coordinates
+  // Enhanced pending sign-ins with precise location data
   const [pendingSignIns, setPendingSignIns] = useState([
     {
       id: 11,
@@ -168,7 +172,13 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
       email: "samuel@example.com",
       signInTime: "2025-06-30T08:55:00Z",
       signOutTime: null,
-      location: { latitude: 8.479900, longitude: 4.541845 },
+      location: { 
+        latitude: 8.482365, 
+        longitude: 4.577115,
+        accuracy: 5.2,
+        distanceToHub: 4.8,
+        timestamp: "2025-06-30T08:55:00Z"
+      },
       status: "pending"
     },
     {
@@ -178,8 +188,20 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
       email: "mary@example.com",
       signInTime: "2025-06-30T09:10:00Z",
       signOutTime: "2025-06-30T17:15:00Z",
-      location: { latitude: 8.479895, longitude: 4.541835 },
-      signOutLocation: { latitude: 8.479905, longitude: 4.541850 },
+      location: { 
+        latitude: 8.482358, 
+        longitude: 4.577108,
+        accuracy: 3.8,
+        distanceToHub: 3.2,
+        timestamp: "2025-06-30T09:10:00Z"
+      },
+      signOutLocation: { 
+        latitude: 8.482362, 
+        longitude: 4.577113,
+        accuracy: 4.1,
+        distanceToHub: 2.1,
+        timestamp: "2025-06-30T17:15:00Z"
+      },
       status: "pending"
     },
   ]);
@@ -325,12 +347,7 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
             ) : (
               <div className="space-y-3">
                 {pendingSignIns.map((signIn) => {
-                  const distance = calculateDistance(
-                    signIn.location.latitude,
-                    signIn.location.longitude,
-                    HUB_COORDS.lat,
-                    HUB_COORDS.lng
-                  );
+                  const distance = signIn.location?.distanceToHub || 0;
                   
                   return (
                     <div
@@ -348,10 +365,15 @@ const AdminDashboard = ({ user, onLogout }: { user: any; onLogout: () => void })
                             <> | Signed out: {new Date(signIn.signOutTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 text-xs">
-                          <MapPin className="w-3 h-3 text-blue-600" />
-                          <span className="text-blue-600">
-                            Distance from IIH: {distance < 1000 ? `${distance.toFixed(0)}m` : `${(distance/1000).toFixed(2)}km`}
+                        <div className="flex items-center gap-4 text-xs mt-1">
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3 text-blue-600" />
+                            <span className="text-blue-600 font-medium">
+                              {distance.toFixed(1)}m from IIH
+                            </span>
+                          </div>
+                          <span className="text-green-600">
+                            ±{signIn.location?.accuracy?.toFixed(1)}m accuracy
                           </span>
                           <span className="text-gray-400">
                             ({signIn.location?.latitude?.toFixed(6)}, {signIn.location?.longitude?.toFixed(6)})

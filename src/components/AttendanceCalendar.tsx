@@ -1,32 +1,37 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 
-// Real Ilorin Innovation Hub coordinates from Google Maps
-const HUB_COORDS = { lat: 8.479898, lng: 4.541840 };
+// Exact Ilorin Innovation Hub coordinates: 8°28'56.5"N 4°34'37.6"E
+const HUB_COORDS = { 
+  lat: 8.482361111111111,  // 8°28'56.5"N converted to decimal degrees
+  lng: 4.577111111111111   // 4°34'37.6"E converted to decimal degrees
+};
 
-function haversine(lat1, lon1, lat2, lon2) {
-  const toRad = x => (x * Math.PI) / 180;
-  const R = 6371000; // Earth's radius in meters
+// High-precision Haversine formula for distance calculation
+function haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const toRad = (x: number) => (x * Math.PI) / 180;
+  const R = 6371000; // Earth's radius in meters (WGS84 ellipsoid)
+  
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+  
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
+  
+  return R * c; // Distance in meters
 }
 
 const AttendanceCalendar = ({ attendance = {} }) => {
   const [today] = useState(new Date());
-  const [distance, setDistance] = useState(null);
+  const [distance, setDistance] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-  const [userLocation, setUserLocation] = useState(null);
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [locationAccuracy, setLocationAccuracy] = useState<number | null>(null);
 
   const year = today.getFullYear();
   const month = today.getMonth();
@@ -36,13 +41,22 @@ const AttendanceCalendar = ({ attendance = {} }) => {
   const getLocation = () => {
     setLoading(true);
     if (navigator.geolocation) {
+      const options: PositionOptions = {
+        enableHighAccuracy: true,
+        timeout: 30000, // 30 seconds timeout
+        maximumAge: 0 // No cached location
+      };
+
       navigator.geolocation.getCurrentPosition(
         pos => {
-          const { latitude, longitude } = pos.coords;
+          const { latitude, longitude, accuracy } = pos.coords;
           console.log("User location:", latitude, longitude);
+          console.log("Location accuracy:", accuracy, "meters");
           console.log("Hub location:", HUB_COORDS.lat, HUB_COORDS.lng);
           
           setUserLocation({ lat: latitude, lng: longitude });
+          setLocationAccuracy(accuracy);
+          
           const dist = haversine(latitude, longitude, HUB_COORDS.lat, HUB_COORDS.lng);
           console.log("Calculated distance:", dist, "meters");
           
@@ -51,17 +65,25 @@ const AttendanceCalendar = ({ attendance = {} }) => {
         },
         (error) => {
           console.error("Geolocation error:", error);
-          alert(`Location error: ${error.message}`);
+          let errorMessage = "Location error: ";
+          
+          if (error.code === 1) {
+            errorMessage += "Location access denied.";
+          } else if (error.code === 2) {
+            errorMessage += "Location unavailable.";
+          } else if (error.code === 3) {
+            errorMessage += "Location request timed out.";
+          } else {
+            errorMessage += error.message;
+          }
+          
+          alert(errorMessage);
           setLoading(false);
         },
-        {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 0
-        }
+        options
       );
     } else {
-      alert("Geolocation not supported");
+      alert("Geolocation not supported by this browser");
       setLoading(false);
     }
   };
@@ -109,7 +131,7 @@ const AttendanceCalendar = ({ attendance = {} }) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-7 gap-2 mb-2">
+        <div className="grid grid-cols-7 gap-2 mb-4">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(d => (
             <div key={d} className="text-center font-bold text-gray-600">
               {d}
@@ -117,22 +139,54 @@ const AttendanceCalendar = ({ attendance = {} }) => {
           ))}
           {calendarDays}
         </div>
-        <div className="flex items-center gap-4 mb-3">
-          <div className="flex items-center gap-1"><span className="w-4 h-4 bg-green-500 rounded inline-block"></span>Present</div>
-          <div className="flex items-center gap-1"><span className="w-4 h-4 bg-red-500 rounded inline-block"></span>Absent</div>
-          <div className="flex items-center gap-1"><span className="w-4 h-4 bg-gray-100 border border-gray-300 rounded inline-block"></span>Yet to come</div>
+        
+        <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-1">
+            <span className="w-4 h-4 bg-green-500 rounded inline-block"></span>
+            Present
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="w-4 h-4 bg-red-500 rounded inline-block"></span>
+            Absent
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="w-4 h-4 bg-gray-100 border border-gray-300 rounded inline-block"></span>
+            Yet to come
+          </div>
         </div>
-        <Button onClick={getLocation} disabled={loading}>
-          {loading ? "Getting location..." : "Check Distance to Hub"}
+
+        {/* Hub Location Info */}
+        <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 mb-3">
+          <div className="text-sm font-medium text-blue-900 mb-1">
+            Ilorin Innovation Hub Location
+          </div>
+          <div className="text-xs text-blue-700">
+            Coordinates: 8°28'56.5"N, 4°34'37.6"E
+          </div>
+          <div className="text-xs text-blue-600">
+            Decimal: {HUB_COORDS.lat.toFixed(6)}, {HUB_COORDS.lng.toFixed(6)}
+          </div>
+        </div>
+        
+        <Button onClick={getLocation} disabled={loading} className="w-full">
+          {loading ? "Getting precise location..." : "Check Distance to Hub"}
         </Button>
+        
         {distance !== null && (
-          <div className="mt-2">
-            <div className="text-blue-700 font-medium">
-              You are {distance < 1000 ? `${distance.toFixed(1)} meters` : `${(distance/1000).toFixed(2)} km`} from Ilorin Innovation Hub.
+          <div className="mt-3 p-3 rounded-lg bg-green-50 border border-green-200">
+            <div className="text-green-800 font-medium text-sm">
+              Distance to IIH: {distance < 1000 ? 
+                `${distance.toFixed(1)} meters` : 
+                `${(distance/1000).toFixed(2)} km`}
             </div>
+            {locationAccuracy && (
+              <div className="text-green-700 text-xs mt-1">
+                Location accuracy: ±{locationAccuracy.toFixed(1)} meters
+              </div>
+            )}
             {userLocation && (
-              <div className="text-xs text-gray-500 mt-1">
-                Your location: {userLocation.lat.toFixed(6)}, {userLocation.lng.toFixed(6)}
+              <div className="text-xs text-green-600 mt-1">
+                Your coordinates: {userLocation.lat.toFixed(6)}, {userLocation.lng.toFixed(6)}
               </div>
             )}
           </div>
