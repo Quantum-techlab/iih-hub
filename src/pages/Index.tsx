@@ -3,13 +3,14 @@ import { useState } from "react";
 import LandingPage from "@/components/LandingPage";
 import AuthModal from "@/components/AuthModal";
 import Dashboard from "@/components/Dashboard";
+import { User } from "@/types";
 
 const Index = () => {
-  const [currentView, setCurrentView] = useState("landing"); // landing, auth, dashboard
-  const [user, setUser] = useState<any>(null);
-  const [authMode, setAuthMode] = useState("login"); // login, register
+  const [currentView, setCurrentView] = useState<"landing" | "auth" | "dashboard">("landing");
+  const [user, setUser] = useState<User | null>(null);
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
 
-  const handleAuthSuccess = (userData) => {
+  const handleAuthSuccess = (userData: User) => {
     setUser(userData);
     setCurrentView("dashboard");
   };
@@ -19,7 +20,7 @@ const Index = () => {
     setCurrentView("landing");
   };
 
-  const openAuth = (mode = "login") => {
+  const openAuth = (mode: "login" | "register" = "login") => {
     setAuthMode(mode);
     setCurrentView("auth");
   };
@@ -34,7 +35,7 @@ const Index = () => {
         mode={authMode}
         onSuccess={handleAuthSuccess}
         onClose={() => setCurrentView("landing")}
-        onSwitchMode={(mode) => setAuthMode(mode)}
+        onSwitchMode={(mode: "login" | "register") => setAuthMode(mode)}
       />
     );
   }

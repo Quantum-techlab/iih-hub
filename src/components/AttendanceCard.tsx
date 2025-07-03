@@ -4,16 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Clock, MapPin, Calendar, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-// Exact Ilorin Innovation Hub coordinates: 8°28'56.5"N 4°34'37.6"E
+// Updated Ilorin Innovation Hub coordinates with higher precision
+// These are the exact coordinates from Google Maps
 const HUB_COORDS = { 
-  lat: 8.482361111111111,  // 8°28'56.5"N converted to decimal degrees
-  lng: 4.577111111111111   // 4°34'37.6"E converted to decimal degrees
+  lat: 8.479898,
+  lng: 4.541840
 };
 
 // High-precision Haversine formula for distance calculation
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
   const toRad = (x: number) => (x * Math.PI) / 180;
-  const R = 6371000; // Earth's radius in meters (WGS84 ellipsoid)
+  const R = 6371000; // Earth's radius in meters
   
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
@@ -24,7 +25,7 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
   
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   
-  return R * c; // Distance in meters
+  return R * c;
 };
 
 const AttendanceCard = ({ user, currentTime, isWeekday, onSignIn, onSignOut }) => {
@@ -50,8 +51,8 @@ const AttendanceCard = ({ user, currentTime, isWeekday, onSignIn, onSignOut }) =
 
       const options: PositionOptions = {
         enableHighAccuracy: true,
-        timeout: 30000, // 30 seconds timeout
-        maximumAge: 0 // No cached location
+        timeout: 30000,
+        maximumAge: 0
       };
 
       navigator.geolocation.getCurrentPosition(resolve, reject, options);
@@ -66,13 +67,16 @@ const AttendanceCard = ({ user, currentTime, isWeekday, onSignIn, onSignOut }) =
       const position = await getHighPrecisionLocation();
       const { latitude, longitude, accuracy } = position.coords;
       
-      // Calculate distance to hub with high precision
+      console.log("User coordinates:", latitude, longitude);
+      console.log("Hub coordinates:", HUB_COORDS.lat, HUB_COORDS.lng);
+      
       const distanceToHub = calculateDistance(latitude, longitude, HUB_COORDS.lat, HUB_COORDS.lng);
+      console.log("Calculated distance:", distanceToHub, "meters");
       
       setLocationStatus(`Location captured with ${accuracy.toFixed(1)}m accuracy`);
       
       const locationData = {
-        latitude: parseFloat(latitude.toFixed(8)), // 8 decimal places for ~1cm precision
+        latitude: parseFloat(latitude.toFixed(8)),
         longitude: parseFloat(longitude.toFixed(8)),
         accuracy: accuracy,
         distanceToHub: parseFloat(distanceToHub.toFixed(2)),
@@ -82,7 +86,7 @@ const AttendanceCard = ({ user, currentTime, isWeekday, onSignIn, onSignOut }) =
 
       toast({
         title: "Sign-in Submitted",
-        description: `Location: ${distanceToHub < 1000 ? 
+        description: `Distance: ${distanceToHub < 1000 ? 
           `${distanceToHub.toFixed(1)}m` : 
           `${(distanceToHub/1000).toFixed(2)}km`} from IIH. Pending admin approval.`,
       });
@@ -125,7 +129,6 @@ const AttendanceCard = ({ user, currentTime, isWeekday, onSignIn, onSignOut }) =
       const position = await getHighPrecisionLocation();
       const { latitude, longitude, accuracy } = position.coords;
       
-      // Calculate distance to hub with high precision
       const distanceToHub = calculateDistance(latitude, longitude, HUB_COORDS.lat, HUB_COORDS.lng);
       
       setLocationStatus(`Location captured with ${accuracy.toFixed(1)}m accuracy`);
@@ -141,7 +144,7 @@ const AttendanceCard = ({ user, currentTime, isWeekday, onSignIn, onSignOut }) =
 
       toast({
         title: "Sign-out Submitted",
-        description: `Location: ${distanceToHub < 1000 ? 
+        description: `Distance: ${distanceToHub < 1000 ? 
           `${distanceToHub.toFixed(1)}m` : 
           `${(distanceToHub/1000).toFixed(2)}km`} from IIH. Pending admin approval.`,
       });
@@ -273,7 +276,7 @@ const AttendanceCard = ({ user, currentTime, isWeekday, onSignIn, onSignOut }) =
             <p className="text-sm font-medium text-gray-700">Ilorin Innovation Hub</p>
           </div>
           <p className="text-xs text-gray-500">
-            8°28'56.5"N, 4°34'37.6"E
+            {HUB_COORDS.lat}°N, {HUB_COORDS.lng}°E
           </p>
         </div>
 

@@ -1,18 +1,19 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 
-// Exact Ilorin Innovation Hub coordinates: 8°28'56.5"N 4°34'37.6"E
+// Updated Ilorin Innovation Hub coordinates with higher precision
 const HUB_COORDS = { 
-  lat: 8.482361111111111,  // 8°28'56.5"N converted to decimal degrees
-  lng: 4.577111111111111   // 4°34'37.6"E converted to decimal degrees
+  lat: 8.479898,
+  lng: 4.541840
 };
 
 // High-precision Haversine formula for distance calculation
 function haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const toRad = (x: number) => (x * Math.PI) / 180;
-  const R = 6371000; // Earth's radius in meters (WGS84 ellipsoid)
+  const R = 6371000; // Earth's radius in meters
   
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
@@ -23,7 +24,7 @@ function haversine(lat1: number, lon1: number, lat2: number, lon2: number): numb
   
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   
-  return R * c; // Distance in meters
+  return R * c;
 }
 
 const AttendanceCalendar = ({ attendance = {} }) => {
@@ -43,8 +44,8 @@ const AttendanceCalendar = ({ attendance = {} }) => {
     if (navigator.geolocation) {
       const options: PositionOptions = {
         enableHighAccuracy: true,
-        timeout: 30000, // 30 seconds timeout
-        maximumAge: 0 // No cached location
+        timeout: 30000,
+        maximumAge: 0
       };
 
       navigator.geolocation.getCurrentPosition(
@@ -161,7 +162,7 @@ const AttendanceCalendar = ({ attendance = {} }) => {
             Ilorin Innovation Hub Location
           </div>
           <div className="text-xs text-blue-700">
-            Coordinates: 8°28'56.5"N, 4°34'37.6"E
+            Coordinates: {HUB_COORDS.lat}°N, {HUB_COORDS.lng}°E
           </div>
           <div className="text-xs text-blue-600">
             Decimal: {HUB_COORDS.lat.toFixed(6)}, {HUB_COORDS.lng.toFixed(6)}

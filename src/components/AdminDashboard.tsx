@@ -8,16 +8,16 @@ import { useToast } from "@/hooks/use-toast";
 import InternAnalytics from "./InternAnalytics";
 import LogoutConfirmation from "./LogoutConfirmation";
 
-// Exact Ilorin Innovation Hub coordinates: 8°28'56.5"N 4°34'37.6"E
+// Updated Ilorin Innovation Hub coordinates with higher precision
 const HUB_COORDS = { 
-  lat: 8.482361111111111,  // 8°28'56.5"N converted to decimal degrees
-  lng: 4.577111111111111   // 4°34'37.6"E converted to decimal degrees
+  lat: 8.479898,
+  lng: 4.541840
 };
 
 // High-precision Haversine formula for distance calculation
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
   const toRad = (x: number) => (x * Math.PI) / 180;
-  const R = 6371000; // Earth's radius in meters (WGS84 ellipsoid)
+  const R = 6371000; // Earth's radius in meters
   
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
@@ -28,7 +28,7 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
   
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   
-  return R * c; // Distance in meters
+  return R * c;
 };
 
 const AdminDashboard = ({ user, onLogout }) => {
@@ -175,8 +175,8 @@ const AdminDashboard = ({ user, onLogout }) => {
       signInTime: "2025-06-30T08:55:00Z",
       signOutTime: null,
       location: { 
-        latitude: 8.482365, 
-        longitude: 4.577115,
+        latitude: 8.479900, 
+        longitude: 4.541845,
         accuracy: 5.2,
         distanceToHub: 4.8,
         timestamp: "2025-06-30T08:55:00Z"
@@ -191,15 +191,15 @@ const AdminDashboard = ({ user, onLogout }) => {
       signInTime: "2025-06-30T09:10:00Z",
       signOutTime: "2025-06-30T17:15:00Z",
       location: { 
-        latitude: 8.482358, 
-        longitude: 4.577108,
+        latitude: 8.479895, 
+        longitude: 4.541838,
         accuracy: 3.8,
         distanceToHub: 3.2,
         timestamp: "2025-06-30T09:10:00Z"
       },
       signOutLocation: { 
-        latitude: 8.482362, 
-        longitude: 4.577113,
+        latitude: 8.479901, 
+        longitude: 4.541843,
         accuracy: 4.1,
         distanceToHub: 2.1,
         timestamp: "2025-06-30T17:15:00Z"
