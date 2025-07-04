@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 interface AuthFormProps {
   mode: "login" | "register";
@@ -16,8 +17,10 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [adminCode, setAdminCode] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +33,30 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
           onSuccess();
         }
       } else {
-        const { error } = await signUp(email, password, name);
+        // Validate admin code if provided
+        let role: 'intern' | 'admin' = 'intern';
+        
+        if (adminCode.trim()) {
+          if (adminCode === "IIH-ADMIN-2025") {
+            role = 'admin';
+          } else {
+            toast({
+              title: "Invalid Admin Access Code",
+              description: "The admin access code you entered is incorrect.",
+              variant: "destructive",
+            });
+            return;
+          }
+        }
+
+        const { error } = await signUp(email, password, name, role);
         if (!error) {
+          toast({
+            title: "Account Created Successfully",
+            description: role === 'admin' 
+              ? "Your admin account has been created!" 
+              : "Your intern account has been created!",
+          });
           onSuccess();
         }
       }
@@ -83,6 +108,23 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
           minLength={6}
         />
       </div>
+
+      {mode === "register" && (
+        <div className="space-y-2">
+          <Label htmlFor="adminCode">Admin Access Code (Optional)</Label>
+          <Input
+            id="adminCode"
+            type="text"
+            value={adminCode}
+            onChange={(e) => setAdminCode(e.target.value)}
+            className="w-full"
+            placeholder="Enter admin code to create admin account"
+          />
+          <p className="text-xs text-gray-500">
+            Leave blank to create a regular intern account
+          </p>
+        </div>
+      )}
 
       <Button
         type="submit"
