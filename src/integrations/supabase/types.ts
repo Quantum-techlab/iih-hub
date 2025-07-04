@@ -9,7 +9,165 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      attendance_records: {
+        Row: {
+          created_at: string | null
+          date: string
+          id: string
+          sign_in_location: Json | null
+          sign_in_time: string | null
+          sign_out_location: Json | null
+          sign_out_time: string | null
+          status: Database["public"]["Enums"]["attendance_status"] | null
+          total_hours: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string
+          id?: string
+          sign_in_location?: Json | null
+          sign_in_time?: string | null
+          sign_out_location?: Json | null
+          sign_out_time?: string | null
+          status?: Database["public"]["Enums"]["attendance_status"] | null
+          total_hours?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          id?: string
+          sign_in_location?: Json | null
+          sign_in_time?: string | null
+          sign_out_location?: Json | null
+          sign_out_time?: string | null
+          status?: Database["public"]["Enums"]["attendance_status"] | null
+          total_hours?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pending_sign_ins: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          attendance_record_id: string | null
+          created_at: string | null
+          id: string
+          rejection_reason: string | null
+          sign_in_location: Json
+          sign_in_time: string
+          sign_out_location: Json | null
+          sign_out_time: string | null
+          status: Database["public"]["Enums"]["sign_in_status"] | null
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          attendance_record_id?: string | null
+          created_at?: string | null
+          id?: string
+          rejection_reason?: string | null
+          sign_in_location: Json
+          sign_in_time: string
+          sign_out_location?: Json | null
+          sign_out_time?: string | null
+          status?: Database["public"]["Enums"]["sign_in_status"] | null
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          attendance_record_id?: string | null
+          created_at?: string | null
+          id?: string
+          rejection_reason?: string | null
+          sign_in_location?: Json
+          sign_in_time?: string
+          sign_out_location?: Json | null
+          sign_out_time?: string | null
+          status?: Database["public"]["Enums"]["sign_in_status"] | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pending_sign_ins_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pending_sign_ins_attendance_record_id_fkey"
+            columns: ["attendance_record_id"]
+            isOneToOne: false
+            referencedRelation: "attendance_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pending_sign_ins_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          department: string | null
+          email: string
+          id: string
+          intern_id: string | null
+          join_date: string | null
+          name: string
+          phone: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          supervisor: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department?: string | null
+          email: string
+          id: string
+          intern_id?: string | null
+          join_date?: string | null
+          name: string
+          phone?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          supervisor?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department?: string | null
+          email?: string
+          id?: string
+          intern_id?: string | null
+          join_date?: string | null
+          name?: string
+          phone?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          supervisor?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +176,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      attendance_status: "signed_in" | "signed_out" | "absent"
+      sign_in_status: "pending" | "approved" | "rejected"
+      user_role: "intern" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +293,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      attendance_status: ["signed_in", "signed_out", "absent"],
+      sign_in_status: ["pending", "approved", "rejected"],
+      user_role: ["intern", "admin"],
+    },
   },
 } as const

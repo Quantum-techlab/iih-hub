@@ -1,22 +1,31 @@
 
-import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import LandingPage from "@/components/LandingPage";
 import AuthModal from "@/components/AuthModal";
 import Dashboard from "@/components/Dashboard";
-import { User } from "@/types";
+import { useState } from "react";
 
 const Index = () => {
-  const [currentView, setCurrentView] = useState<"landing" | "auth" | "dashboard">("landing");
-  const [user, setUser] = useState<User | null>(null);
+  const { user, loading } = useAuth();
+  const [currentView, setCurrentView] = useState<"landing" | "auth">("landing");
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
 
-  const handleAuthSuccess = (userData: User) => {
-    setUser(userData);
-    setCurrentView("dashboard");
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const handleLogout = () => {
-    setUser(null);
+  if (user) {
+    return <Dashboard />;
+  }
+
+  const handleAuthSuccess = () => {
     setCurrentView("landing");
   };
 
@@ -24,10 +33,6 @@ const Index = () => {
     setAuthMode(mode);
     setCurrentView("auth");
   };
-
-  if (currentView === "dashboard" && user) {
-    return <Dashboard user={user} onLogout={handleLogout} />;
-  }
 
   if (currentView === "auth") {
     return (
