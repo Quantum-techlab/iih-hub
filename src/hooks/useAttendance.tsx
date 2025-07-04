@@ -28,12 +28,12 @@ interface PendingSignIn {
 // Helper function to convert Json to LocationData
 const jsonToLocationData = (json: Json | null): LocationData | undefined => {
   if (!json || typeof json !== 'object') return undefined;
-  return json as LocationData;
+  return json as unknown as LocationData;
 };
 
 // Helper function to convert LocationData to Json
 const locationDataToJson = (location: LocationData): Json => {
-  return location as Json;
+  return location as unknown as Json;
 };
 
 export const useAttendance = () => {
