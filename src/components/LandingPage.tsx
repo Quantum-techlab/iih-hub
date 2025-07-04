@@ -1,9 +1,9 @@
+
 import { Calendar, Clock, Users, Shield, ChevronRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import TypewriterText from "./TypewriterText";
-import MarqueeAlongSvgPath from "./MarqueeAlongSvgPath";
 import { useState } from "react";
 
 const features = [
@@ -43,38 +43,11 @@ const cardVariant = {
   visible: { opacity: 1, y: 0 }
 };
 
-// SVG path for the marquee
-const path = "M1 209.434C58.5872 255.935 387.926 325.938 482.583 209.434C600.905 63.8051 525.516 -43.2211 427.332 19.9613C329.149 83.1436 352.902 242.723 515.041 267.302C644.752 286.966 943.56 181.94 995 156.5";
+interface LandingPageProps {
+  onOpenAuth: (mode: "login" | "register") => void;
+}
 
-// Innovation-themed images for the marquee
-const innovationImages = [
-  {
-    src: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400",
-    alt: "Innovation Hub"
-  },
-  {
-    src: "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=400",
-    alt: "Technology"
-  },
-  {
-    src: "https://images.pexels.com/photos/3184293/pexels-photo-3184293.jpeg?auto=compress&cs=tinysrgb&w=400",
-    alt: "Collaboration"
-  },
-  {
-    src: "https://images.pexels.com/photos/3184294/pexels-photo-3184294.jpeg?auto=compress&cs=tinysrgb&w=400",
-    alt: "Innovation"
-  },
-  {
-    src: "https://images.pexels.com/photos/3184295/pexels-photo-3184295.jpeg?auto=compress&cs=tinysrgb&w=400",
-    alt: "Development"
-  },
-  {
-    src: "https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=400",
-    alt: "Learning"
-  }
-];
-
-const LandingPage = ({ onOpenAuth }) => {
+const LandingPage = ({ onOpenAuth }: LandingPageProps) => {
   const [typewriterComplete, setTypewriterComplete] = useState(false);
 
   return (
@@ -153,53 +126,25 @@ const LandingPage = ({ onOpenAuth }) => {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.2 }}
-                  className="flex flex-col sm:flex-row gap-4 justify-center items-center relative"
+                  className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto"
                 >
-                  {/* Fancy Marquee Component */}
-                  <div className="relative">
-                    <MarqueeAlongSvgPath
-                      path={path}
-                      baseVelocity={8}
-                      slowdownOnHover={true}
-                      draggable={true}
-                      repeat={2}
-                      dragSensitivity={0.1}
-                      className="absolute -left-24 sm:-left-32 top-32 scale-60 sm:scale-100 pointer-events-none"
-                      grabCursor
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
+                    <Button
+                      size="lg"
+                      onClick={() => onOpenAuth("register")}
+                      className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300"
                     >
-                      {innovationImages.map((img, i) => (
-                        <div
-                          key={i}
-                          className="w-14 h-14 hover:scale-150 duration-300 ease-in-out rounded-lg overflow-hidden shadow-lg"
-                        >
-                          <img
-                            src={img.src}
-                            alt={img.alt}
-                            className="w-full h-full object-cover"
-                            draggable={false}
-                          />
-                        </div>
-                      ))}
-                    </MarqueeAlongSvgPath>
-                    
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                      <Button
-                        size="lg"
-                        onClick={() => onOpenAuth("register")}
-                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 relative z-10"
-                      >
-                        Start Tracking Today
-                        <ChevronRight className="w-5 h-5 ml-2" />
-                      </Button>
-                    </motion.div>
-                  </div>
+                      Start Tracking Today
+                      <ChevronRight className="w-5 h-5 ml-2" />
+                    </Button>
+                  </motion.div>
                   
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
                     <Button
                       size="lg"
                       variant="outline"
                       onClick={() => onOpenAuth("login")}
-                      className="px-8 py-4 text-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition-all duration-300 bg-white/80 backdrop-blur-sm"
+                      className="w-full sm:w-auto px-8 py-4 text-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition-all duration-300 bg-white/80 backdrop-blur-sm"
                     >
                       Sign In
                     </Button>

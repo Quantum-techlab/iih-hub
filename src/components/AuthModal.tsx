@@ -4,8 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, X } from "lucide-react";
 import AuthForm from "./AuthForm";
+import { User } from "@/types";
 
-const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }) => {
+interface AuthModalProps {
+  mode: "login" | "register";
+  onSuccess: (userData: User) => void;
+  onClose: () => void;
+  onSwitchMode: (mode: "login" | "register") => void;
+}
+
+const AuthModal = ({ mode, onSuccess, onClose, onSwitchMode }: AuthModalProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto py-4 px-4 bg-black/50 backdrop-blur-sm">
       {/* Animated backgrounds */}

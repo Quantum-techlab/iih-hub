@@ -89,3 +89,26 @@ export interface PendingSignIn {
   };
   status: 'pending';
 }
+
+// Auth form interfaces
+export interface AuthFormProps {
+  mode: "login" | "register";
+  onSuccess: (userData: User) => void;
+  onSwitchMode: (mode: "login" | "register") => void;
+}
+
+// Landing page interfaces
+export interface LandingPageProps {
+  onOpenAuth: (mode: "login" | "register") => void;
+}
+
+// Dashboard interfaces
+export interface DashboardProps {
+  user: User;
+  onLogout: () => void;
+}
+
+// Attendance calendar interfaces
+export interface AttendanceCalendarProps {
+  attendance?: Record<string, "present" | "absent">;
+}
