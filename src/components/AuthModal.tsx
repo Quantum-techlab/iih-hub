@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, X } from "lucide-react";
 import AuthForm from "./AuthForm";
-import { User } from "@/types";
 
 interface AuthModalProps {
   mode: "login" | "register";
-  onSuccess: (userData: User) => void;
+  onSuccess: () => void;
   onClose: () => void;
   onSwitchMode: (mode: "login" | "register") => void;
 }

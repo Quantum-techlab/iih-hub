@@ -93,7 +93,7 @@ export interface PendingSignIn {
 // Auth form interfaces
 export interface AuthFormProps {
   mode: "login" | "register";
-  onSuccess: (userData: User) => void;
+  onSuccess: () => void;
   onSwitchMode: (mode: "login" | "register") => void;
 }
 

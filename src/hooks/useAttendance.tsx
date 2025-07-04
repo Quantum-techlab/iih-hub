@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { LocationData } from '@/types';
+import { Json } from '@/integrations/supabase/types';
 
 interface AttendanceRecord {
   id: string;
@@ -23,6 +24,17 @@ interface PendingSignIn {
   sign_out_location?: LocationData;
   status: 'pending' | 'approved' | 'rejected';
 }
+
+// Helper function to convert Json to LocationData
+const jsonToLocationData = (json: Json | null): LocationData | undefined => {
+  if (!json || typeof json !== 'object') return undefined;
+  return json as LocationData;
+};
+
+// Helper function to convert LocationData to Json
+const locationDataToJson = (location: LocationData): Json => {
+  return location as Json;
+};
 
 export const useAttendance = () => {
   const { user } = useAuth();
@@ -48,12 +60,24 @@ export const useAttendance = () => {
         .eq('user_id', user.id)
         .order('date', { ascending: false });
 
-      setAttendanceRecords(records || []);
+      if (records) {
+        const mappedRecords: AttendanceRecord[] = records.map(record => ({
+          id: record.id,
+          date: record.date,
+          sign_in_time: record.sign_in_time || undefined,
+          sign_out_time: record.sign_out_time || undefined,
+          sign_in_location: jsonToLocationData(record.sign_in_location),
+          sign_out_location: jsonToLocationData(record.sign_out_location),
+          status: record.status || 'absent',
+          total_hours: record.total_hours || undefined
+        }));
+        setAttendanceRecords(mappedRecords);
 
-      // Get today's record
-      const today = new Date().toISOString().split('T')[0];
-      const todayRecord = records?.find(r => r.date === today);
-      setTodayRecord(todayRecord || null);
+        // Get today's record
+        const today = new Date().toISOString().split('T')[0];
+        const todayRecord = mappedRecords.find(r => r.date === today);
+        setTodayRecord(todayRecord || null);
+      }
 
       // Fetch pending sign-ins
       const { data: pending } = await supabase
@@ -63,7 +87,17 @@ export const useAttendance = () => {
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
-      setPendingSignIns(pending || []);
+      if (pending) {
+        const mappedPending: PendingSignIn[] = pending.map(p => ({
+          id: p.id,
+          sign_in_time: p.sign_in_time,
+          sign_out_time: p.sign_out_time || undefined,
+          sign_in_location: jsonToLocationData(p.sign_in_location)!,
+          sign_out_location: jsonToLocationData(p.sign_out_location),
+          status: p.status || 'pending'
+        }));
+        setPendingSignIns(mappedPending);
+      }
     } catch (error) {
       console.error('Error fetching attendance data:', error);
     } finally {
@@ -80,7 +114,7 @@ export const useAttendance = () => {
         .insert({
           user_id: user.id,
           sign_in_time: new Date().toISOString(),
-          sign_in_location: location,
+          sign_in_location: locationDataToJson(location),
           status: 'pending'
         });
 
@@ -110,7 +144,7 @@ export const useAttendance = () => {
           .from('pending_sign_ins')
           .update({
             sign_out_time: new Date().toISOString(),
-            sign_out_location: location
+            sign_out_location: locationDataToJson(location)
           })
           .eq('id', existingPending.id);
 
@@ -123,8 +157,8 @@ export const useAttendance = () => {
             user_id: user.id,
             sign_in_time: new Date().toISOString(),
             sign_out_time: new Date().toISOString(),
-            sign_in_location: location,
-            sign_out_location: location,
+            sign_in_location: locationDataToJson(location),
+            sign_out_location: locationDataToJson(location),
             status: 'pending'
           });
 
