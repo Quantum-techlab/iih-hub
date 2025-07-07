@@ -121,8 +121,8 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
             className="w-full"
             placeholder="Enter admin code to create admin account"
           />
-          <p className="text-xs text-gray-500">
-            Leave blank to create a regular intern account
+          <p className="text-sm font-bold text-gray-700 bg-gray-50 p-2 rounded border">
+            <strong>Leave blank to create a regular intern account</strong>
           </p>
         </div>
       )}

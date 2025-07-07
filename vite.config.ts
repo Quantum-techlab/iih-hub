@@ -19,4 +19,8 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  define: {
+    // Hide Lovable badge in production
+    __LOVABLE_SHOW_BADGE__: mode === 'development',
+  },
 }));
