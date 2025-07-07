@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { useTypingSound } from "@/hooks/useTypingSound";
 
 interface AuthFormProps {
   mode: "login" | "register";
@@ -22,12 +21,6 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
-  const { playTypingSound } = useTypingSound();
-
-  const handleInputChange = (setter: (value: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    playTypingSound();
-    setter(e.target.value);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +75,7 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
             id="name"
             type="text"
             value={name}
-            onChange={handleInputChange(setName)}
+            onChange={(e) => setName(e.target.value)}
             required
             className="w-full"
             placeholder="Enter your full name"
@@ -96,7 +89,7 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
           id="email"
           type="email"
           value={email}
-          onChange={handleInputChange(setEmail)}
+          onChange={(e) => setEmail(e.target.value)}
           required
           className="w-full"
           placeholder="Enter your email"
@@ -109,7 +102,7 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
           id="password"
           type="password"
           value={password}
-          onChange={handleInputChange(setPassword)}
+          onChange={(e) => setPassword(e.target.value)}
           required
           className="w-full"
           placeholder="Enter your password"
@@ -124,7 +117,7 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
             id="adminCode"
             type="text"
             value={adminCode}
-            onChange={handleInputChange(setAdminCode)}
+            onChange={(e) => setAdminCode(e.target.value)}
             className="w-full"
             placeholder="Enter admin code to create admin account"
           />
