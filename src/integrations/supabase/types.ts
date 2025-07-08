@@ -64,6 +64,30 @@ export type Database = {
           },
         ]
       }
+      error_logs: {
+        Row: {
+          created_at: string
+          error_context: string | null
+          error_detail: string | null
+          error_message: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          error_context?: string | null
+          error_detail?: string | null
+          error_message: string
+          id?: never
+        }
+        Update: {
+          created_at?: string
+          error_context?: string | null
+          error_detail?: string | null
+          error_message?: string
+          id?: never
+        }
+        Relationships: []
+      }
       pending_sign_ins: {
         Row: {
           approved_at: string | null
