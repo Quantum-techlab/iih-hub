@@ -55,8 +55,8 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
           toast({
             title: "Account Created Successfully", 
             description: role === 'admin' 
-              ? "Your admin account has been created!" 
-              : "Your intern account has been created!",
+              ? "Your admin account has been created! Please check your email to verify your account." 
+              : "Your intern account has been created! Please check your email to verify your account.",
           });
           onSuccess();
         }
@@ -121,7 +121,7 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
             className="w-full"
             placeholder="Enter admin code to create admin account"
           />
-          <p className="text-sm font-bold text-gray-700 bg-gray-50 p-2 rounded border">
+          <p className="text-sm font-bold text-gray-800 bg-gray-50 p-3 rounded border">
             <strong>Leave blank to create a regular intern account</strong>
           </p>
         </div>

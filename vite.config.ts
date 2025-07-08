@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   define: {
-    // Hide Lovable badge in production
-    __LOVABLE_SHOW_BADGE__: mode === 'development',
+    // Hide Lovable badge in all environments
+    __LOVABLE_SHOW_BADGE__: false,
   },
 }));

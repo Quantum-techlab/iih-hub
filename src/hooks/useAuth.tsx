@@ -57,6 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     if (error) {
+      console.error('Sign up error:', error);
       toast({
         title: "Sign Up Error",
         description: error.message,
