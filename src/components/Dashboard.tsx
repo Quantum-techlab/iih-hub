@@ -57,7 +57,14 @@ const Dashboard = () => {
   }
 
   if (profile.role === 'staff') {
-    return <StaffDashboard user={profile} onLogout={signOut} />;
+    // Create a staff-specific user object that matches the expected type
+    const staffUser = {
+      id: profile.id,
+      name: profile.name,
+      email: profile.email,
+      role: 'staff' as const
+    };
+    return <StaffDashboard user={staffUser} onLogout={signOut} />;
   }
 
   // Default intern dashboard

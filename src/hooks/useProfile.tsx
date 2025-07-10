@@ -52,9 +52,26 @@ export const useProfile = () => {
     if (!user) return { error: 'No user logged in' };
 
     try {
+      // Create a safe update object that only includes fields that exist in the database
+      const safeUpdates: any = {};
+      
+      // Only include fields that are definitely in the database schema
+      if (updates.name !== undefined) safeUpdates.name = updates.name;
+      if (updates.email !== undefined) safeUpdates.email = updates.email;
+      if (updates.phone !== undefined) safeUpdates.phone = updates.phone;
+      if (updates.intern_id !== undefined) safeUpdates.intern_id = updates.intern_id;
+      if (updates.department !== undefined) safeUpdates.department = updates.department;
+      if (updates.supervisor !== undefined) safeUpdates.supervisor = updates.supervisor;
+      if (updates.join_date !== undefined) safeUpdates.join_date = updates.join_date;
+      
+      // Handle role separately with proper type casting
+      if (updates.role !== undefined) {
+        safeUpdates.role = updates.role;
+      }
+
       const { error } = await supabase
         .from('profiles')
-        .update(updates)
+        .update(safeUpdates)
         .eq('id', user.id);
 
       if (error) throw error;
