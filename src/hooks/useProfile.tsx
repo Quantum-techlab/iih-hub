@@ -8,7 +8,7 @@ interface Profile {
   name: string;
   email: string;
   phone?: string;
-  role: 'intern' | 'admin';
+  role: 'intern' | 'admin' | 'staff';
   intern_id?: string;
   department?: string;
   supervisor?: string;

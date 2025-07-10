@@ -3,19 +3,23 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, LogOut, User, BarChart3 } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
-import { useProfile } from "@/hooks/useProfile";
 import { useAttendance } from "@/hooks/useAttendance";
 import AttendanceCard from "./AttendanceCard";
-import AdminDashboard from "./AdminDashboard";
-import StaffDashboard from "./StaffDashboard";
 import AttendanceHistory from "./AttendanceHistory";
 import UserProfile from "./UserProfile";
 import LogoutConfirmation from "./LogoutConfirmation";
 
-const Dashboard = () => {
-  const { user, signOut } = useAuth();
-  const { profile } = useProfile();
+interface StaffDashboardProps {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role: 'staff';
+  };
+  onLogout: () => Promise<void>;
+}
+
+const StaffDashboard = ({ user, onLogout }: StaffDashboardProps) => {
   const { submitSignIn, submitSignOut, hasPendingSignIn, isSignedInToday, hasSignedOutToday } = useAttendance();
   const [activeTab, setActiveTab] = useState<"attendance" | "history" | "profile">("attendance");
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -37,43 +41,22 @@ const Dashboard = () => {
 
   const handleLogoutConfirm = async () => {
     setShowLogoutDialog(false);
-    await signOut();
+    await onLogout();
   };
 
-  if (!profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your profile...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Route to appropriate dashboard based on role
-  if (profile.role === 'admin') {
-    return <AdminDashboard user={profile} onLogout={signOut} />;
-  }
-
-  if (profile.role === 'staff') {
-    return <StaffDashboard user={profile} onLogout={signOut} />;
-  }
-
-  // Default intern dashboard
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
       {/* Header */}
       <header className="bg-white/90 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-40">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg flex items-center justify-center">
                 <Calendar className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="font-bold text-gray-900">IIH Attendance</h1>
-                <p className="text-xs text-gray-500">Welcome back, {profile.name}!</p>
+                <h1 className="font-bold text-gray-900">Staff Attendance</h1>
+                <p className="text-xs text-gray-500">Welcome back, {user.name}!</p>
               </div>
             </div>
 
@@ -122,7 +105,7 @@ const Dashboard = () => {
           <div className="space-y-6">
             <AttendanceCard
               user={{
-                ...profile,
+                ...user,
                 signedInToday: isSignedInToday,
                 pendingSignIn: hasPendingSignIn ? { timestamp: new Date(), location: null } : undefined
               }}
@@ -143,10 +126,10 @@ const Dashboard = () => {
         isOpen={showLogoutDialog}
         onClose={() => setShowLogoutDialog(false)}
         onConfirm={handleLogoutConfirm}
-        userName={profile.name}
+        userName={user.name}
       />
     </div>
   );
 };
 
-export default Dashboard;
+export default StaffDashboard;

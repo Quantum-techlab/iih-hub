@@ -3,7 +3,7 @@ export interface User {
   id?: string;
   name: string;
   email: string;
-  role: 'intern' | 'admin';
+  role: 'intern' | 'admin' | 'staff';
   internId?: string;
   phone?: string;
   signedInToday?: boolean;

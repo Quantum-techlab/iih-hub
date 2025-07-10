@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +18,7 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [role, setRole] = useState<'intern' | 'admin' | 'staff'>('intern');
   const [adminCode, setAdminCode] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
@@ -33,13 +35,9 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
           onSuccess();
         }
       } else {
-        // Validate admin code if provided
-        let role: 'intern' | 'admin' = 'intern';
-        
-        if (adminCode.trim()) {
-          if (adminCode === "IIH-ADMIN-2025") {
-            role = 'admin';
-          } else {
+        // Validate admin code if admin role is selected
+        if (role === 'admin') {
+          if (adminCode !== "IIH-ADMIN-2025") {
             toast({
               title: "Invalid Admin Access Code",
               description: "The admin access code you entered is incorrect.",
@@ -52,11 +50,21 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
 
         const { error } = await signUp(email, password, name, role);
         if (!error) {
+          let roleDescription = '';
+          switch (role) {
+            case 'admin':
+              roleDescription = 'admin';
+              break;
+            case 'staff':
+              roleDescription = 'staff';
+              break;
+            default:
+              roleDescription = 'intern';
+          }
+          
           toast({
             title: "Account Created Successfully", 
-            description: role === 'admin' 
-              ? "Your admin account has been created! Please check your email to verify your account." 
-              : "Your intern account has been created! Please check your email to verify your account.",
+            description: `Your ${roleDescription} account has been created! Please check your email to verify your account.`,
           });
           onSuccess();
         }
@@ -111,20 +119,47 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
       </div>
 
       {mode === "register" && (
-        <div className="space-y-2">
-          <Label htmlFor="adminCode">Admin Access Code (Optional)</Label>
-          <Input
-            id="adminCode"
-            type="text"
-            value={adminCode}
-            onChange={(e) => setAdminCode(e.target.value)}
-            className="w-full"
-            placeholder="Enter admin code to create admin account"
-          />
-          <p className="text-sm font-bold text-gray-800 bg-gray-50 p-3 rounded border">
-            <strong>Leave blank to create a regular intern account</strong>
-          </p>
-        </div>
+        <>
+          <div className="space-y-2">
+            <Label htmlFor="role">Role</Label>
+            <Select value={role} onValueChange={(value: 'intern' | 'admin' | 'staff') => setRole(value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select your role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="intern">Intern</SelectItem>
+                <SelectItem value="staff">Staff</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {role === 'admin' && (
+            <div className="space-y-2">
+              <Label htmlFor="adminCode">Admin Access Code</Label>
+              <Input
+                id="adminCode"
+                type="text"
+                value={adminCode}
+                onChange={(e) => setAdminCode(e.target.value)}
+                required
+                className="w-full"
+                placeholder="Enter admin access code"
+              />
+              <p className="text-sm text-gray-600">
+                Admin access code is required to create an admin account.
+              </p>
+            </div>
+          )}
+
+          {role !== 'admin' && (
+            <div className="p-3 bg-blue-50 rounded border border-blue-200">
+              <p className="text-sm text-blue-800">
+                <strong>Creating {role} account</strong> - You will have access to the {role} dashboard after verification.
+              </p>
+            </div>
+          )}
+        </>
       )}
 
       <Button
