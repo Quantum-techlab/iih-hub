@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import ErrorHandler from '@/utils/errorHandler';
 import { LocationData } from '@/types';
 import { Json } from '@/integrations/supabase/types';
 
@@ -99,6 +100,7 @@ export const useAttendance = () => {
         setPendingSignIns(mappedPending);
       }
     } catch (error) {
+      await ErrorHandler.handleSupabaseError(error, 'Fetch attendance data');
       console.error('Error fetching attendance data:', error);
     } finally {
       setLoading(false);
@@ -118,7 +120,10 @@ export const useAttendance = () => {
           status: 'pending'
         });
 
-      if (error) throw error;
+      if (error) {
+        const appError = await ErrorHandler.handleSupabaseError(error, 'Submit sign-in');
+        throw appError;
+      }
       
       await fetchAttendanceData();
       return { error: null };
@@ -148,7 +153,10 @@ export const useAttendance = () => {
           })
           .eq('id', existingPending.id);
 
-        if (error) throw error;
+        if (error) {
+          const appError = await ErrorHandler.handleSupabaseError(error, 'Update sign-out');
+          throw appError;
+        }
       } else {
         // Create new pending sign-out
         const { error } = await supabase
@@ -162,7 +170,10 @@ export const useAttendance = () => {
             status: 'pending'
           });
 
-        if (error) throw error;
+        if (error) {
+          const appError = await ErrorHandler.handleSupabaseError(error, 'Submit sign-out');
+          throw appError;
+        }
       }
       
       await fetchAttendanceData();

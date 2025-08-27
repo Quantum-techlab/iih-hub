@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import ErrorHandler from '@/utils/errorHandler';
 
 interface Profile {
   id: string;
@@ -39,7 +40,10 @@ export const useProfile = () => {
         .eq('id', user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        await ErrorHandler.handleSupabaseError(error, 'Fetch user profile');
+        throw error;
+      }
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -74,7 +78,10 @@ export const useProfile = () => {
         .update(safeUpdates)
         .eq('id', user.id);
 
-      if (error) throw error;
+      if (error) {
+        const appError = await ErrorHandler.handleSupabaseError(error, 'Update user profile');
+        throw appError;
+      }
       
       setProfile(prev => prev ? { ...prev, ...updates } : null);
       return { error: null };

@@ -207,7 +207,7 @@ export type Database = {
     Enums: {
       attendance_status: "signed_in" | "signed_out" | "absent"
       sign_in_status: "pending" | "approved" | "rejected"
-      user_role: "intern" | "admin"
+      user_role: "intern" | "admin" | "staff"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -337,7 +337,7 @@ export const Constants = {
     Enums: {
       attendance_status: ["signed_in", "signed_out", "absent"],
       sign_in_status: ["pending", "approved", "rejected"],
-      user_role: ["intern", "admin"],
+      user_role: ["intern", "admin", "staff"],
     },
   },
 } as const
