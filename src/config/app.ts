@@ -40,7 +40,7 @@ export const APP_CONFIG = {
   // UI Configuration
   ui: {
     theme: 'light',
-    primaryColor: '#2563eb',
+    primaryColor: '#16a34a',
     secondaryColor: '#64748b',
     successColor: '#059669',
     warningColor: '#d97706',

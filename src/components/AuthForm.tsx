@@ -153,8 +153,8 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
           )}
 
           {role !== 'admin' && (
-            <div className="p-3 bg-blue-50 rounded border border-blue-200">
-              <p className="text-sm text-blue-800">
+            <div className="p-3 bg-green-50 rounded border border-green-200">
+              <p className="text-sm text-green-800">
                 <strong>Creating {role} account</strong> - You will have access to the {role} dashboard after verification.
               </p>
             </div>
@@ -165,7 +165,7 @@ const AuthForm = ({ mode, onSuccess, onSwitchMode }: AuthFormProps) => {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+        className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
       >
         {loading ? (
           <>

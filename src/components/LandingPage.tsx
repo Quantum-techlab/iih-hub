@@ -57,7 +57,7 @@ const LandingPage = ({ onOpenAuth }: LandingPageProps) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg flex items-center justify-center">
                 <Calendar className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -75,7 +75,7 @@ const LandingPage = ({ onOpenAuth }: LandingPageProps) => {
               </Button>
               <Button
                 onClick={() => onOpenAuth("register")}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
                 Get Started
               </Button>
@@ -105,7 +105,7 @@ const LandingPage = ({ onOpenAuth }: LandingPageProps) => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600"
+                    className="block text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600"
                   >
                     Ilorin Innovation Hub
                   </motion.span>
@@ -132,7 +132,7 @@ const LandingPage = ({ onOpenAuth }: LandingPageProps) => {
                     <Button
                       size="lg"
                       onClick={() => onOpenAuth("register")}
-                      className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300"
+                      className="w-full sm:w-auto bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300"
                     >
                       Start Tracking Today
                       <ChevronRight className="w-5 h-5 ml-2" />
@@ -144,7 +144,7 @@ const LandingPage = ({ onOpenAuth }: LandingPageProps) => {
                       size="lg"
                       variant="outline"
                       onClick={() => onOpenAuth("login")}
-                      className="w-full sm:w-auto px-8 py-4 text-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition-all duration-300 bg-white/80 backdrop-blur-sm"
+                      className="w-full sm:w-auto px-8 py-4 text-lg border-2 border-gray-300 hover:border-green-600 hover:text-green-600 transition-all duration-300 bg-white/80 backdrop-blur-sm"
                     >
                       Sign In
                     </Button>
@@ -190,8 +190,8 @@ const LandingPage = ({ onOpenAuth }: LandingPageProps) => {
                   className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 shadow-lg bg-white/70 backdrop-blur-sm"
                 >
                   <CardContent className="p-6 text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                      <feature.icon className="w-8 h-8 text-blue-600" />
+                    <div className="w-16 h-16 bg-gradient-to-r from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                      <feature.icon className="w-8 h-8 text-green-600" />
                     </div>
                     <h3 className="font-semibold text-lg text-gray-900 mb-2">
                       {feature.title}
@@ -248,9 +248,9 @@ const LandingPage = ({ onOpenAuth }: LandingPageProps) => {
             </motion.div>
             <motion.div
               variants={sectionVariant}
-              className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl p-8 text-center"
+              className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-3xl p-8 text-center"
             >
-              <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <div className="w-24 h-24 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Users className="w-12 h-12 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
@@ -261,7 +261,7 @@ const LandingPage = ({ onOpenAuth }: LandingPageProps) => {
               </p>
               <Button
                 onClick={() => onOpenAuth("register")}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-all duration-300 hover:scale-105"
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white transition-all duration-300 hover:scale-105"
               >
                 Get Started Now
               </Button>
@@ -276,7 +276,7 @@ const LandingPage = ({ onOpenAuth }: LandingPageProps) => {
           <div className="grid md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg flex items-center justify-center">
                   <Calendar className="w-6 h-6 text-white" />
                 </div>
                 <span className="font-bold text-xl">IIH Attendance</span>
