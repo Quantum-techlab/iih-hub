@@ -4,7 +4,6 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import ErrorHandler from '@/utils/errorHandler';
-import apiService from '@/services/api';
 import { APP_CONFIG } from '@/config/app';
 
 interface AuthContextType {

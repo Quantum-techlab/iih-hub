@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Connection Test</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Supabase Connection Test</h1>
+    <div id="status">Testing connection...</div>
+    <div id="result"></div>
+
+    <script>
+        const SUPABASE_URL = "https://cxkzcsduxaeziwfwbcyz.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4a3pjc2R1eGFleml3ZndiY3l6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyOTA5OTQsImV4cCI6MjA2Njg2Njk5NH0.OZ0Jcil6tgHFonCwmt-4oZcCf3gKCX37S9y8qKHvz-Q";
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function testConnection() {
+            const statusDiv = document.getElementById('status');
+            const resultDiv = document.getElementById('result');
+
+            try {
+                statusDiv.textContent = 'Testing Supabase connection...';
+                
+                // Test basic connection
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) {
+                    statusDiv.textContent = '❌ Connection failed';
+                    resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                    return;
+                }
+                
+                statusDiv.textContent = '✅ Supabase connection successful';
+                resultDiv.innerHTML = '<p style="color: green;">Connection test passed!</p>';
+                
+                // Test user registration
+                statusDiv.textContent = 'Testing user registration...';
+                const testEmail = `test-${Date.now()}@example.com`;
+                const testPassword = 'testpassword123';
+                const testName = 'Test User';
+                
+                const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                    email: testEmail,
+                    password: testPassword,
+                    options: {
+                        data: {
+                            name: testName,
+                            role: 'intern'
+                        }
+                    }
+                });
+                
+                if (signUpError) {
+                    statusDiv.textContent = '❌ User registration failed';
+                    resultDiv.innerHTML = `<p style="color: red;">Registration Error: ${signUpError.message}</p>`;
+                    return;
+                }
+                
+                statusDiv.textContent = '✅ All tests passed!';
+                resultDiv.innerHTML = `
+                    <p style="color: green;">✅ Supabase connection successful</p>
+                    <p style="color: green;">✅ User registration successful</p>
+                    <p>📧 Test user created: ${testEmail}</p>
+                    <p>🔑 User ID: ${signUpData.user?.id}</p>
+                    <p><strong>🎉 You can now try creating an account in the main application!</strong></p>
+                `;
+                
+            } catch (error) {
+                statusDiv.textContent = '❌ Test failed';
+                resultDiv.innerHTML = `<p style="color: red;">Unexpected error: ${error.message}</p>`;
+            }
+        }
+
+        // Run test when page loads
+        testConnection();
+    </script>
+</body>
+</html>
